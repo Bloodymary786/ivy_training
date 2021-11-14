@@ -1,0 +1,342 @@
+Day 1:Introduction to data structures	
+1. Array, String, Linked lists. 
+2. Stack, Queue, Heap: Using Arrays and lists. 
+3. Maps/Dictionary/Hash table. 
+4. Trees, Binary Tree, Binary search tree. 
+5. Graph: Different representation of graph, BFS, DFS
+Hash Tables	
+1. Notion of Hashing and Collision (with a simple vector-based hash table) 
+2. Hash Functions - properties, simple has function	
+3. Methods for Collision Handling - separate chaining, notion of load factor, rehashing, open addressing
+
+
+
+Discussion :
+_______________
+
+Trainer introduction
+https://www.linkedin.com/in/rajeevguptajavatrainer/
+
+What is Java=OOPs+ JVM + Lib
+Eclipse / sts + Java configuration , hello world
+
+
+data structures?
+
+A data structure is a particular way of storing and 
+organizing data in a computer so that it can be used efficiently
+
+https://www.google.com/search?q=what+is+data+structure&tbm=isch&ved=2ahUKEwiZpvLu_pH0AhWzp0sFHUu-A2QQ2-cCegQIABAA&oq=what+is+data+structure&gs_lcp=CgNpbWcQAzIHCCMQ7wMQJzIFCAAQgAQyBQgAEIAEMgUIABCABDIFCAAQgAQyBQgAEIAEMgUIABCABDIFCAAQgAQyBQgAEIAEMgUIABCABDoECAAQGDoGCAAQCBAeUMsFWMoPYLYTaABwAHgAgAGSAYgB-wiSAQMwLjmYAQCgAQGqAQtnd3Mtd2l6LWltZ8ABAQ&sclient=img&ei=Ee6NYdnZBrPPrtoPy_yOoAY&bih=664&biw=1398#imgrc=O3gJ2U7PfJEB_M
+
+Programming basics : logic and dry run 
+
+looping : sum numbers and printing
+___________________________	
+	Scanner scanner=new Scanner(System.in);	
+	System.out.println("PE a no");
+		
+	int sum=0;
+		
+	int no=scanner.nextInt();
+		
+	for(int i=1; i<=no; i++) {
+		sum=sum+i;
+	}
+		
+	System.out.println("sum: "+ sum);
+
+
+//logic for checking prime no
+_________________________
+	System.out.println("PE a number for cheking prime no");
+	Scanner scanner=new Scanner(System.in);
+		
+	int no=scanner.nextInt();
+		
+	boolean isPrime=true; //assume no is a prime no
+		
+	for(int i=2;i<=(no-1); i++) {
+		// % gives reminder
+		if(no%i==0) {
+			isPrime=false;// my assumption was wrong and it is not a prime no
+			break; //braek will break the loops
+		}
+	}
+		
+	if(isPrime==true) {
+		System.out.println("no is a prime no");
+	}else
+		System.out.println("no is not a prime no");
+	scanner.close();
+
+Array? 
+______
+An array in Java is a set of variables referenced by using a single variable name combined with an index number
+
+Creating array? using array?
+
+
+//declare and initialize and array
+int[] age = {12, 4, 5, 2, 5};
+
+Ref: https://www.programiz.com/java-programming/arrays
+
+
+Example : find max / min from the array
+__________________________
+
+public class ArrayDemo2 {
+
+	public static void main(String[] args) {
+		int marks[]= {89,78,80,90,97,87,64};
+		//max marks ? min marks?
+		int max=marks[0];
+		int min=marks[0];
+		
+		for(int i=0;i<marks.length; i++) {
+			if(marks[i]> max) {
+				max=marks[i];
+			}
+			if(marks[i]<min) {
+				min=marks[i];
+			}
+		}
+		
+		System.out.println("min: "+ min);
+		System.out.println("max: "+max);
+		
+	}
+}
+Example : Linear Search
+__________________________
+
+public class LinearSearch {
+	
+	public static void main(String[] args) {
+		int arr[]= {3,5,6,-3,78,22};
+		int val=-3;
+		int pos=-1;//invalid pos
+		
+		pos = findElementByLinearSearch(arr, val);
+		
+		if(pos!=-1) {
+			System.out.println("elment is found and index is : "+pos);
+		}else
+			System.out.println("element is not found");
+	}
+
+	private static int findElementByLinearSearch(int[] arr, int val) {
+		int pos=-1;
+		for(int i=0;i<arr.length; i++) {
+			if(arr[i]==val) {
+				pos=i;
+				break;
+			}
+		}
+		return pos;
+	}
+
+}
+
+
+1. pascal:
+________
+
+
+ for(i=0;i<n;i++){
+            for(j=0;j<=i;j++)
+                if(j==0 || j==i)
+                    a[i][j]=1;
+                else
+                    a[i][j]=a[i-1][j-1]+a[i-1][j];
+      }
+
+
+2. java date problem:
+ return (year % 4 == 0 and year % 100 != 0) or year % 400 == 0
+
+
+31,28,31,30,31,30,31,31,30,31,30,31 
+
+https://www.timeanddate.com/calendar/months/
+
+3. matrix add/mulitplication
+
+
+	int a[][] = {{1,0,0},{0,1,0},{0,0,1}};
+		int b[][] = {{1,7,9},{3,1,9},{2,1,1}};
+		int c[][] = new int[3][3];
+
+		for (int i = 0; i < 3; i++) 
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				c[i][j] = 0;
+				for (int k = 0; k < 3; k++)
+				{
+					c[i][j] += a[i][k] * b[k][j];
+				}
+				System.out.print(c[i][j] + " "); 
+			}
+			System.out.println();
+		}
+	}
+
+
+4. seprating -ve and +ve from the array
+
+int a[]= {4,6,-1,-2,6,9};
+		int b[]=new int[5];
+		int c[]=new int[5];
+		int j,k;
+		j=0;
+		k=0;
+		for(int i=0;i<a.length;) {
+			if(a[i]>=0) {
+				b[j++]=a[i++];
+			}
+			else
+				c[k++]=a[i++];
+		}
+		
+		for(int temp=0;temp<j; temp++)
+			System.out.println(b[temp]);
+		
+		for(int temp=0;temp<k; temp++)
+			System.out.println(c[temp]);
+
+
+5. convert no decimal to binary
+	23-> ?
+	
+6. student result calculation 
+		int a[]= {
+				78,88,90,25,99,100,56,88,90,49,
+				78,88,90,25,99,100,56,88,90,49,
+				8,88,90,25,99,100,56,88,90,49,
+				22,66,23,89,23,19,33,49,77,89,
+				22,66,3,89,23,19,33,49,77,89
+				};
+	result:
+		0-10:1
+		10-20:3
+			....
+		90-100? 
+
+
+7. finding duplicate from arrary
+	int a[]= {78,88,90,25,99,100,56,88,90,49,78,88,90,25};
+		//find duplicate
+		for(int i=0;i<a.length;i++) {
+			for(int j=i+1; j<a.length; j++) {
+				if(a[i]==a[j])
+					System.out.println("duplicate found: "+ a[i]);
+			}
+		}
+
+
+8. find largest and smallest in arrary
+
+9.  find firstLargest and secondLargest in arrary
+
+int a[]= {78,88,90,25,99,100};
+		int firstLargest=a[0];
+		int secondLargest=a[0];
+		
+		for(int i=0;i<a.length; i++) {
+			if(a[i]>firstLargest) {
+				secondLargest=firstLargest;
+				firstLargest=a[i];
+			}else {
+				secondLargest=a[i];
+			}
+		}
+		
+		System.out.println(firstLargest);
+		System.out.println(secondLargest);
+
+9. common elements between two Arrays
+		int a[]= {71,5,8,117};
+		int b[]= {3,6,-9,117,78,88,90,11};
+		//find duplicate
+		for(int i=0;i<a.length;i++) {
+			for(int j=0; j<b.length; j++) {
+				if(a[i]==b[j]) {
+					System.out.println(a[i]);
+					break;
+				}
+			}
+		}
+
+
+
+10 .seprating zero and ones
+0,1,0,0,1,0,1,1
+0 0 0 0 1 1 1 1 
+
+
+
+//Segregate 0s and 1s in an Array
+		int a[]= {0,1,0,0,1,0,1,1};
+		int j=0;
+		
+		//put zeros only
+		for(int i=0;i< a.length; i++) {
+			if(a[i]==0)
+				a[j++]=a[i];
+		}
+		
+		//we already moved zero, now the remaining values are 1
+		while(j<a.length)
+			a[j++]=1;
+		
+		//now print
+		for(int i=0;i< a.length ; i++) {
+			System.out.print(a[i]+" ");
+		}
+
+
+
+//removing duplicate element from an array
+		
+		//1. Approach 1: sort the array then remove duplicate element
+		int a[]= {11,1,7,11,19,21};
+		int j=0;
+		Arrays.sort(a);
+		//1, 7, 11, 11, 19, 21 
+		
+		for(int i=0;i< a.length-1; i++) {
+			if(a[i]!=a[i+1]) {
+				a[j++]=a[i];
+			}
+		}
+		
+		//insert last element
+		a[j++]=a[a.length-1];
+		
+		//printing
+		for(int i=0;i<j; i++) {
+			System.out.print(a[i]+" ");
+			
+		}
+
+
+Insertion in sorted arrray:
+___________________________
+	int a[]= {3,6,7,9,18,22,0};
+		int k=a.length-2;
+		int item=20;
+		while((item<a[k]&&(k>=0))) {
+			a[k+1]=a[k];
+			k--;
+		}
+		a[k+1]=item;
+	
+		for(int i=0;i<a.length; i++) {
+			System.out.println(a[i]);
+		}
+
+
+
+
+
