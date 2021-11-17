@@ -20,6 +20,7 @@ https://www.linkedin.com/in/rajeevguptajavatrainer/
 What is Java=OOPs+ JVM + Lib
 Eclipse / sts + Java configuration , hello world
 
+https://drive.google.com/file/d/1fixozfRkhxwa5U31RsG9wSXxQ4_5dnc7/view
 
 data structures?
 
