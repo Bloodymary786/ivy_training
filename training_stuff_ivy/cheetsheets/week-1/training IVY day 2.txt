@@ -242,7 +242,43 @@ public class MergeSort {
 	}
 
 	
-	
+
+
+
+
+ int c[]=new int[a.length+b.length];
+  
+  System.out.println(c.length);
+  int l1=a.length;
+  int l2=b.length;
+  int i=0;
+  int j=0;
+  int k=0;
+  while(i<l1&&j<l2)
+  {
+	if(a[i]<b[j])
+	{
+		c[k++]=a[i++];
+	}
+	else
+	{
+		c[k++]=b[j++];
+	}
+  }
+  while(i<l1)
+  {
+	c[k++]=a[i++];
+  }
+  while(j<l2)
+  {
+	c[k++]=b[j++];
+  }
+  for(int temp : c)
+  {
+	System.out.print(temp+" ");
+  }
+ }
+}
 
 Quick sort:
 ______________
