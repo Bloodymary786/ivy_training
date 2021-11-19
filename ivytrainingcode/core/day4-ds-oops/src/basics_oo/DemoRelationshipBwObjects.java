@@ -39,7 +39,8 @@ public class DemoRelationshipBwObjects {
 	public static void main(String[] args) {
 		//Metro metro=new Metro();
 		//Car car=new Car();
-		Vehical vehical =new Bike();
+		//Vehical vehical =new Bike();
+		Vehical vehical=new Bike();
 		
 		Passanger passanger=new Passanger("raj");
 		passanger.travel("viman nager", "gandhi musium", vehical);
