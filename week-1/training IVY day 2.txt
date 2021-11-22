@@ -1,0 +1,316 @@
+
+
+
+Day 2: Day 2:data structures: Searching and Sorting and tree
+____________________________________________________________
+1. Counting sort, insertion sort, bubble sort. 
+2. Heap sort 
+3. Quick sort merge sort. 
+4. Search element: unordered array, ordered array, Heap.	
+
+Trees	
+1. Different representation of trees. 
+2. Tree basic operations: Create tree, insert node, delete node etc. 
+3. Different traversal of trees: in-order, pre-order, post-order, level-order. 
+4. Introduction to binary search tree a. Create, insert new node in binary search tree b. Search in BST. 
+5. Example of balanced binary tree: AVL, RB etc
+
+Graphs	
+1. Different representation of graph
+2. BFS, DFS, Topological sort.
+3. Importance and Applications of graph: Single source shortest path, All pair shortest path
+
+
+  
+Recursion:
+_____________
+public class Factorial {
+	static int factorial(int n) {
+		if (n == 0)
+			return 1;
+		else
+			return (n * factorial(n - 1));
+	}
+
+	public static void main(String args[]) {
+		int i, fact = 1;
+		int number = 4;
+		fact = factorial(number);
+		System.out.println("Factorial of " + number + " is: " + fact);
+	}
+}	
+
+linear search:
+_____________
+
+public class LinearSearch {
+
+	public static void main(String[] args) {
+		int arr[]= {3,5,6,-3,78,22};
+		int pos=-1;
+		int val=60;
+		boolean isFound=false;
+		for(int i=0;i<arr.length; i++) {
+			if(arr[i]==val) {
+				isFound=true;
+				pos=i;
+				break;
+			}
+		}
+		if(isFound)
+			System.out.println("found: "+ pos);
+		else
+			System.out.println("not found");
+	}
+}
+
+
+
+
+binary search:
+________________
+
+
+
+public class DemoBS {
+
+	public static void main(String[] args) {
+		int arr[]= {3,5,6,-3,78,22};
+		int first,last, mid;
+		first=0;
+		last=arr.length-1;
+		 mid = (first + last) / 2;
+		 int key=78;
+		 
+		while (first <= last) {
+			if (arr[mid] < key) {
+				first = mid + 1;
+			} else if (arr[mid] == key) {
+				System.out.println("Element is found at index: " + mid);
+				break;
+			} else {
+				last = mid - 1;
+			}
+			mid = (first + last) / 2;
+		}
+		if (first > last) {
+			System.out.println("Element is not found!");
+		}
+	}
+}
+
+
+
+
+
+
+Bubble sort:
+______________
+
+int a[]= {38,52,9,18, 6,62,13};
+		int temp;
+		for(int i=0;i<a.length; i++)
+		{
+			for(int j=0;j<a.length-1; j++) 
+			{
+				if(a[j]> a[j+1]) 
+				{
+					temp=a[j];
+					a[j]=a[j+1];
+					a[j+1]=temp;
+				}
+			}
+		}
+		for(int val: a) {
+			System.out.print(val+" ");
+		}
+
+
+Selection sort
+________________
+searh smallest and swap with current value
+
+int a[]= {38,52,9,18, 6,62,13};
+		int min;
+		int temp;
+		for(int i=0;i<a.length; i++)
+		{
+			min=i;
+			for(int j=i+1;j<a.length; j++) 
+			{
+				if(a[j]<a[min]) 
+					min=j;
+			}
+			temp=a[i];
+			a[i]=a[min];
+			a[min]=temp;
+			
+		}
+		for(int val: a) {
+			System.out.print(val+" ");
+		}
+
+
+insertion sort 
+________________
+put element to its corrrect position(card playing)
+
+int a[]= {5,1,6,2,4,3};// playing card
+		int temp;
+		int j;
+		for(int i=0;i<a.length; i++)
+		{
+			temp=a[i];
+			j=i;
+			while(j>0 && a[j-1]> temp)
+			{
+				a[j]=a[j-1];
+				j=j-1;
+			}
+			a[j]=temp;
+		}
+		for(int val: a) {
+			System.out.print(val+" ");
+		}
+
+
+
+MergeSort
+__________
+
+public class MergeSort {
+	
+	public static void sort(int inputArray[]){
+		sort(inputArray, 0, inputArray.length-1);
+	}
+	
+	public static void sort(int inputArray[], int start, int end){
+		if(end <= start){
+			return; // we're done traversing the array
+		}
+		
+		int mid = (start + end)/2;
+		sort(inputArray, start, mid); // sort left half
+		sort(inputArray, mid+1, end); // sort right half
+		merge(inputArray, start, mid, end); // merge sorted results into the inputArray
+	}
+	
+	public static void merge(int inputArray[], int start, int mid, int end){
+		int tempArray[] = new int [end - start +1 ];
+		
+		// index counter for the left side of the array
+		int leftSlot = start;
+		// index counter for the right side of the array
+		int rightSlot = mid+1;
+		int k = 0;
+		
+		while(leftSlot <= mid && rightSlot <= end){
+			if(inputArray[leftSlot] < inputArray[rightSlot]){
+				tempArray[k] = inputArray[leftSlot];
+				leftSlot = leftSlot + 1;
+			} else{
+				tempArray[k] = inputArray[rightSlot];
+				rightSlot = rightSlot + 1;
+			}
+			k = k+1;
+		}
+		
+		/**
+		 * When it get's to here, that means the above loop has completed.
+		 * So both the right and the left side of the sub-array can be considered sorted
+		 */
+		
+		if(leftSlot <= mid){ // consider the right side done being sorted. Left must be sorted already
+			while(leftSlot <= mid){
+				tempArray[k] = inputArray[leftSlot];
+				leftSlot = leftSlot + 1;
+				k = k+1;
+			}
+		} else if ( rightSlot <= end){
+			while(rightSlot <= end){
+				tempArray[k] = inputArray[rightSlot];
+				rightSlot = rightSlot+1;
+				k = k+1;
+			}
+		}
+		
+		// copy over the tmep array into the appropriate slots of the inputArray
+		for(int i = 0; i < tempArray.length; i++){
+			inputArray[start+i] = tempArray[i];
+		}
+		
+	}
+
+	
+
+
+
+
+ int c[]=new int[a.length+b.length];
+  
+  System.out.println(c.length);
+  int l1=a.length;
+  int l2=b.length;
+  int i=0;
+  int j=0;
+  int k=0;
+  while(i<l1&&j<l2)
+  {
+	if(a[i]<b[j])
+	{
+		c[k++]=a[i++];
+	}
+	else
+	{
+		c[k++]=b[j++];
+	}
+  }
+  while(i<l1)
+  {
+	c[k++]=a[i++];
+  }
+  while(j<l2)
+  {
+	c[k++]=b[j++];
+  }
+  for(int temp : c)
+  {
+	System.out.print(temp+" ");
+  }
+ }
+}
+
+Quick sort:
+______________
+
+	public static void quickSort(int [] arr , int start, int end){
+		if(start < end){
+			int pp = partition(arr, start, end); // index position of the correctly placed value in the array
+			quickSort(arr, start, pp-1); // sorts the left half of the range
+			quickSort(arr, pp+1, end); // sorts the right half of the range
+		}
+	}
+	
+	public static int partition(int [] arr, int start, int end){
+		
+		int pivot = arr[end];
+		// in the first iteration, i starts from -1
+		int i = start - 1;
+		for(int j = start; j <= end-1; j++){
+			if(arr[j] <= pivot){
+				i++;
+				// we are swapping below
+				int ival = arr[i];
+				int jval = arr[j];
+				arr[i] = jval;
+				arr[j] = ival;
+			}
+		}
+		
+		// put the pivot value in the correct slot next
+		int ival = arr[i+1];
+		arr[end] = ival;
+		arr[i+1] = pivot; // here, pivot value is placed in the correct slot of the array.
+		
+		return i+1;
+	}

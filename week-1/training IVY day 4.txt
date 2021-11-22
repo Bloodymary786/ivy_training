@@ -1,0 +1,172 @@
+
+
+
+Day 2: Day 2:data structures:Tree, Graph, Heap
+____________________________________________________________
+Trees	
+1. Different representation of trees. 
+2. Tree basic operations: Create tree, insert node, delete node etc. 
+3. Different traversal of trees: in-order, pre-order, post-order, level-order. 
+4. Introduction to binary search tree a. Create, insert new node in binary search tree b. Search in BST. 
+5. Example of balanced binary tree: AVL, RB etc
+
+Graphs	
+1. Different representation of graph
+2. BFS, DFS, Topological sort.
+3. Importance and Applications of graph: Single source shortest path, All pair shortest path
+
+Tree example:
+_____________
+  
+class Node {
+	int key;
+	Node leftChild, rightChild;
+
+	Node(int keyVal) {
+		key = keyVal;
+	}
+}
+
+class BST {
+
+	private Node root;
+
+	public void insert(int key) {
+
+		Node newNode = new Node(key);
+		if (root == null) {
+			root = newNode;
+		} else {
+
+			Node current = root;
+			Node parent;
+
+			while (true) {
+				parent = current;
+				if (key < current.key) {
+					current = current.leftChild;
+					if (current == null) {
+						parent.leftChild = newNode;
+						return;
+					}
+				} else {
+					current = current.rightChild;
+					if (current == null) {
+						parent.rightChild = newNode;
+						return;
+					}
+
+				}
+
+			}
+		}
+	}
+
+	public Node findMin() {
+		Node current = root;
+		Node last = null;
+
+		while (current != null) {
+			last = current;
+			current = current.leftChild;
+		}
+		return last;
+	}
+
+	public Node findMax() {
+		Node current = root;
+		Node last = null;
+
+		while (current != null) {
+			last = current;
+			current = current.rightChild;
+		}
+		return last;
+	}
+
+}
+
+public class DemoTree {
+
+	public static void main(String[] args) {
+		BST tree = new BST();
+		tree.insert(10);
+		tree.insert(20);
+		tree.insert(22);
+		tree.insert(18);
+		tree.insert(19);
+		tree.insert(17);
+
+		System.out.println(tree.findMin().key);
+		System.out.println(tree.findMax().key);
+	}
+}
+
+
+
+
+Graph example:
+_______________
+
+import java.util.ArrayList;
+
+class Graph {
+	private int vCount;
+	private int eCount;
+
+	private ArrayList[] adjacents;
+
+	public Graph(int vCount) {
+		this.vCount = vCount;
+		this.eCount = 0;
+		adjacents = new ArrayList[vCount];
+
+		for (int i = 0; i < vCount; i++) {
+			adjacents[i] = new ArrayList();
+		}
+	}
+
+	public int getVertexCount() {
+		return vCount;
+	}
+
+	public int getEdgeCount() {
+		return eCount;
+	}
+
+	public void addEdge(int src, int dest) {
+		adjacents[src].add(dest);
+		eCount++;
+	}
+
+	public Object[] adj(int src) {
+		return adjacents[src].toArray();
+	}
+
+}
+
+public class DemoGraph {
+
+	public static void main(String[] args) {
+		Graph myGraph = new Graph(5);
+
+		myGraph.addEdge(0, 1);
+		myGraph.addEdge(0, 2);
+		myGraph.addEdge(0, 3);
+
+		myGraph.addEdge(1, 2);
+		myGraph.addEdge(1, 4);
+
+		myGraph.addEdge(2, 3);
+		
+		myGraph.addEdge(3, 1);
+		myGraph.addEdge(4, 0);
+		myGraph.addEdge(4, 3);
+
+		Object[] values = myGraph.adj(1);
+		for (Object val : values) {
+			System.out.println(val);
+		}
+
+	}
+}
