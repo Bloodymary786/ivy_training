@@ -421,7 +421,7 @@ __________________________
 		Transformer t=TransformerFactory.newInstance().newTransformer();
 		
 		
-		t.transform(new DOMSource(document), new StreamResult(new FileOutputStream("c:/raj/students.xml")));
+		t.transform(new DOMSource(document), new StreamResult(new FileOutputStream("students.xml")));
 		
 		System.out.println("xml file generated...");
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.demo.com/comany" 
+xmlns:tns="http://www.demo.com/comany" elementFormDefault="unqualified">
+
+    <element name="company" type="tns:companyType"></element>
+    
+    <complexType name="companyType">
+    	<sequence>
+    		<element name="companyName" type="string"></element>
+    		<element name="companyAddress" type="string"></element>
+    		<element name="employees" type="tns:employeeType"
+    			maxOccurs="unbounded" minOccurs="1">
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="employeeType">
+    	<sequence>
+    		<element name="id" type="string"></element>
+    		<element name="name" type="string"></element>
+    		<element name="salary" type="double"></element>
+    		<element name="phone" type="string"></element>
+    	</sequence>
+    </complexType>
+</schema>

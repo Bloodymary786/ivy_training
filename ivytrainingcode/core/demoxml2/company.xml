@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:company xmlns:tns="http://www.demo.com/comany" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.demo.com/comany comany.xsd ">
+  <companyName>companyName</companyName>
+  <companyAddress>companyAddress</companyAddress>
+  <employees>
+    <id>id</id>
+    <name>name</name>
+    <salary>0.0</salary>
+    <phone>phone</phone>
+  </employees>
+</tns:company>
