@@ -7,11 +7,11 @@
 <title>the result of calculation</title>
 </head>
 <body>
-
 <%
 		Integer val=(Integer)request.getAttribute("sum");
 		out.print("result of calculation is :"+val +"<br/>");
-%>
+			
+%>	
 <a href="cal.jsp">want more calculation ?</a>
 
 

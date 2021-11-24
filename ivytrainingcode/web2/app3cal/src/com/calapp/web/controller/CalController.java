@@ -38,7 +38,7 @@ public class CalController extends HttpServlet {
 		request.setAttribute("sum", sum); //used to pass the data from S-->jsp
 		
 		//used to tranfer the control from S-> jsp
-		RequestDispatcher rd=request.getRequestDispatcher("view.jsp");
+		RequestDispatcher rd=request.getRequestDispatcher("view.jsp");//more after the break
 		rd.forward(request, response);
 		
 		
