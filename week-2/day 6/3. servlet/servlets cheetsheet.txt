@@ -143,6 +143,7 @@ create an customer record processing application:
 	out.println("<b>Fax: </b>" + fax + "<BR>");
 	out.println("<b>E-mail: </b>" + email + "<BR>");
 
+create table emp(eid int not null primary key auto_increment, ename varchar(50) not null, salary double not null);
 
 
 
