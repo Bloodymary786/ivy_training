@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>app2</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  <servlet>
+    <servlet-name>HelloServlet</servlet-name>
+    <servlet-class>com.demo.HelloServlet</servlet-class>
+    <init-param>
+      <param-name>name</param-name>
+      <param-value>rajiv</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>HelloServlet</servlet-name>
+    <url-pattern>/hello</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>Hello2Servlet</servlet-name>
+    <servlet-class>com.demo.Hello2Servlet</servlet-class>
+    <init-param>
+      <param-name>location</param-name>
+      <param-value>delhi</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Hello2Servlet</servlet-name>
+    <url-pattern>/hello2</url-pattern>
+  </servlet-mapping>
+  <context-param>
+    <param-name>companyName</param-name>
+    <param-value>ivy india</param-value>
+  </context-param>
+  
+  <servlet>
+    <servlet-name>S1</servlet-name>
+    <servlet-class>com.demo.S1</servlet-class>
+    <load-on-startup>1</load-on-startup> <!-- spring mvc -->
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>S1</servlet-name>
+    <url-pattern>/S1</url-pattern>
+  </servlet-mapping>
+  
+</web-app>
