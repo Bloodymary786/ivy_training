@@ -1,17 +1,23 @@
 package com.demo;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class S2 extends HttpServlet {
+public class CounterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
+
+	private int counter=0;
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println("I am servlet S2");
-	}
 
+		counter++;
+		PrintWriter out =response.getWriter();
+		out.print(counter);
+	}
 }

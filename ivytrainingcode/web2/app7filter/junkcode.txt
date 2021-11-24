@@ -1,0 +1,15 @@
+<!-- <%
+	Person person=(Person)request.getAttribute("person");
+	Dog dog=person.getDog();
+	out.print(dog.getDogName());
+%> -->
+
+
+
+
+<%
+	List<Employee> employees=(ArrayList<Employee>)request.getAttribute("employees");
+	for(Employee employee: employees){
+		out.print(employee.getEid() +" : "+ employee.getEname()+" : "+ employee.getSalary()+"<br/>");
+	}
+%>

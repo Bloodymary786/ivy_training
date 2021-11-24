@@ -26,7 +26,5 @@ public class F1 implements Filter {
 		chain.doFilter(request, response);
 	}
 
-	public void destroy() {
-
-	}
+	public void destroy() {}
 }

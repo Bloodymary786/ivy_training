@@ -84,6 +84,9 @@ ________________________________
 
 
 
+create table users(username varchar(80) not null primary key, password varchar(80) not null, profile varchar(10) not null);
+insert into users(username, password, profile) values('raj','raj123','admin');
+insert into users(username, password, profile) values('ekta','ekta123','mgr');
 	expresssion
 	------------
 

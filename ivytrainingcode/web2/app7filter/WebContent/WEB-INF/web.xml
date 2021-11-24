@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>app7filter</display-name>
-  
   <servlet>
     <servlet-name>S1</servlet-name>
     <servlet-class>com.demo.S1</servlet-class>
   </servlet>
-  
   <servlet-mapping>
     <servlet-name>S1</servlet-name>
     <url-pattern>/S1.do</url-pattern>
   </servlet-mapping>
-  
   <servlet>
     <servlet-name>S2</servlet-name>
     <servlet-class>com.demo.S2</servlet-class>
   </servlet>
-  
   <servlet-mapping>
     <servlet-name>S2</servlet-name>
     <url-pattern>/S2.do</url-pattern>
   </servlet-mapping>
-  
   <filter>
     <display-name>F1</display-name>
     <filter-name>F1</filter-name>
@@ -29,7 +24,26 @@
   </filter>
   <filter-mapping>
     <filter-name>F1</filter-name>
-    <url-pattern>*.do</url-pattern> <!-- wild card -->
+    <url-pattern>*.do</url-pattern>
   </filter-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CounterServlet</display-name>
+    <servlet-name>CounterServlet</servlet-name>
+    <servlet-class>com.demo.CounterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CounterServlet</servlet-name>
+    <url-pattern>/CounterServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EmpController</display-name>
+    <servlet-name>EmpController</servlet-name>
+    <servlet-class>com.demo.EmpController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EmpController</servlet-name>
+    <url-pattern>/EmpController</url-pattern>
+  </servlet-mapping>
 </web-app>
-
