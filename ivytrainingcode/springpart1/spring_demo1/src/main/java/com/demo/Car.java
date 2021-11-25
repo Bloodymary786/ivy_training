@@ -4,6 +4,14 @@ public class Car {
 	private String brand;
 	private Tyre tyre;
 
+	public Car(String brand, Tyre tyre) {
+		this.brand = brand;
+		this.tyre = tyre;
+	}
+
+	public Car() {
+	}
+
 	public void setBrand(String brand) {
 		this.brand = brand;
 	}
@@ -12,8 +20,6 @@ public class Car {
 		this.tyre = tyre;
 	}
 
-	
-	
 	public String getBrand() {
 		return brand;
 	}

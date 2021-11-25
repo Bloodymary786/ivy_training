@@ -4,11 +4,18 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<!-- bean wiring : telling spring what depend on what  -->
-	<bean id="car" class="com.demo.Car" scope="prototype">
-		<property name="brand" value="i10"/>
-		<property name="tyre" ref="tyre"/>
+	<!-- bean wiring : telling spring what depend on what spring profile :u 
+		have power to chooose bean without chanching anything * -->
+
+	<!-- this is ctr injection -->
+	<!-- <bean id="car" class="com.demo.Car" scope="prototype"> <constructor-arg 
+		index="0" value="i10"/> <constructor-arg index="1" ref="tyre1"/> </bean> -->
+
+	<!-- this is setter injection -->
+	<bean id="car" class="com.demo.Car" scope="prototype" autowire="byType">
+		<property name="brand" value="i10" />
 	</bean>
-	
-	<bean id="tyre" class="com.demo.CeatTyre" scope="prototype"/>
+
+	<bean id="tyre1" class="com.demo.MrfTyre" primary="true"/>
+	<bean id="tyre2" class="com.demo.CeatTyre" />
 </beans>
