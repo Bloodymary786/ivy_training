@@ -1,6 +1,16 @@
 package com.jaxb;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlRootElement(name="employee")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name="employeeType", propOrder = {"id","salary","name"})
 public class Employee {
+	@XmlElement(required = true)
 	private int id;
 	private String name;
 	private double salary;
