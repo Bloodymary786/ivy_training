@@ -39,9 +39,9 @@ public class Creating {
 		Text t4=document.createTextNode("noida");
 		
 		nameEle.appendChild(t1);
-		emailEle.appendChild(t1);
-		mobileEle.appendChild(t1);
-		addressEle.appendChild(t1);
+		emailEle.appendChild(t2);
+		mobileEle.appendChild(t3);
+		addressEle.appendChild(t4);
 		
 		studentEle.appendChild(nameEle);
 		studentEle.appendChild(emailEle);
@@ -55,7 +55,7 @@ public class Creating {
 		Transformer t=TransformerFactory.newInstance().newTransformer();
 		
 		
-		t.transform(new DOMSource(document), new StreamResult(new FileOutputStream("students.xml")));
+		t.transform(new DOMSource(document), new StreamResult(new FileOutputStream("students1.xml")));
 		
 		System.out.println("xml file generated...");
 	}

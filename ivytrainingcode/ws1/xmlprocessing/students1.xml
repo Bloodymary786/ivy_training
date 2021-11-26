@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<students>
+	<student>
+		<name>raja</name>
+		<email>raja@raja.com</email>
+		<mobile>434343434</mobile>
+		<address>noida</address>
+    </student>
+</students>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+targetNamespace="http://www.ivy.com/employees" 
+xmlns:tns="http://www.ivy.com/employees" elementFormDefault="unqualified">
+
+    <element name="employees" type="tns:employeesType"></element>
+    
+    <complexType name="employeesType">
+    	<sequence>
+    		<element name="companyName" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="employee" type="tns:employeeType" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="employeeType">
+    	<sequence>
+    		<element name="id" type="int"></element>
+    		<element name="name" type="string"></element>
+    		<element name="address" type="string"></element>
+    		<element name="dob" type="date"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="dob"></complexType>
+</schema>
