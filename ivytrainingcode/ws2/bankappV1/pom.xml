@@ -20,6 +20,13 @@
 			<version>5.1.37</version>
 		</dependency>
 
+	<!-- 
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.22</version>
+</dependency>
+	 -->
 		<!-- jstl -->
 		<!-- https://mvnrepository.com/artifact/javax.servlet/jstl -->
 		<dependency>
