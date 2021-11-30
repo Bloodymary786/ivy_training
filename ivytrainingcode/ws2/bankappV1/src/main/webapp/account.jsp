@@ -14,6 +14,10 @@
 				<td><input name="name" /></td>
 			</tr>
 			<tr>
+				<td>customer initial opening balance</td>
+				<td><input name="balance" /></td>
+			</tr>
+			<tr>
 				<td>customer dob</td>
 				<td><input name="dob" /></td>
 			</tr>

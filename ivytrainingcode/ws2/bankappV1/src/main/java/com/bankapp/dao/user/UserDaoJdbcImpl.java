@@ -24,7 +24,7 @@ public class UserDaoJdbcImpl implements UserDao {
 			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs.next()) {
-				user=new User(userName, password, rs.getString(3));
+				user=new User(userName, password, rs.getString(4));
 			}else {
 				throw new UserNotFoundException("user with name "+ userName + " is not found");
 			}

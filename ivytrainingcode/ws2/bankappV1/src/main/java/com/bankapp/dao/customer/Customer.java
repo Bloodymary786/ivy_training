@@ -5,10 +5,13 @@ import java.util.Date;
 public class Customer {
 	private int id;
 	private String name;
+	private double  balance;
 	private Date dob;
 	private String  address;
 	private String  email;
 	private String  accountType;
+	
+	
 	public int getId() {
 		return id;
 	}
@@ -45,12 +48,30 @@ public class Customer {
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
 	}
-	public Customer(String name, Date dob, String address, String email, String accountType) {
+	
+
+	public double getBalance() {
+		return balance;
+	}
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+	
+	
+	public Customer(String name, double balance, Date dob, String address, String email, String accountType) {
 		this.name = name;
+		this.balance = balance;
 		this.dob = dob;
 		this.address = address;
 		this.email = email;
 		this.accountType = accountType;
 	}
 	public Customer() {}
+	@Override
+	public String toString() {
+		return "Customer [id=" + id + ", name=" + name + ", balance=" + balance + ", dob=" + dob + ", address="
+				+ address + ", email=" + email + ", accountType=" + accountType + "]";
+	}
+	
+	
 }
