@@ -1,8 +1,7 @@
 package com.bankapp.dao.transactions;
-
+import java.util.*;
 import java.sql.*;
 import java.util.Date;
-import java.util.List;
 
 import com.bankapp.dao.factory.JdbcConnectionFactory;
 
@@ -90,16 +89,60 @@ public class AccountTransactionImpl implements AccountTransaction {
 
 	@Override
 	public List<Transaction> getAllTransactions() {
-		//it will give all transactions
-		return null;
+		List<Transaction> transactions=new ArrayList<Transaction>();
+		//account_transaction
+		try{
+			PreparedStatement pstmt=connection.prepareStatement("select * from account_transaction");
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()) {
+				Transaction transaction=new Transaction();
+				transaction.setTxdate(rs.getDate(2));
+				transaction.setAmount(rs.getDouble(4));
+				transaction.setOptype(rs.getString(5));
+				transaction.setCid(rs.getInt(3));
+				transaction.setTid(rs.getInt(1));
+				transactions.add(transaction);
+			}
+		}catch(SQLException ex) {
+			ex.printStackTrace();
+		}
+		return transactions;
 	}
 
 	@Override
 	public List<Transaction> getTransactionsBetweenTwoDates(Date fromDate, Date toDate) {
-		return null;
+		List<Transaction> transactions=new ArrayList<Transaction>();
+		//account_transaction
+		try{
+			PreparedStatement pstmt=connection.prepareStatement("SELECT * FROM account_transaction WHERE txdate>=? AND txdate <=?");
+			pstmt.setDate(1, new java.sql.Date(fromDate.getTime()));
+			pstmt.setDate(2, new java.sql.Date(toDate.getTime()));
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()) {
+				Transaction transaction=new Transaction();
+				transaction.setTxdate(rs.getDate(2));
+				transaction.setAmount(rs.getDouble(4));
+				transaction.setOptype(rs.getString(5));
+				transaction.setCid(rs.getInt(3));
+				transaction.setTid(rs.getInt(1));
+				transactions.add(transaction);
+			}
+		}catch(SQLException ex) {
+			ex.printStackTrace();
+		}
+		return transactions;
 	}
 
 }
+
+
+
+
+
+
+
+
+
 
 
 
