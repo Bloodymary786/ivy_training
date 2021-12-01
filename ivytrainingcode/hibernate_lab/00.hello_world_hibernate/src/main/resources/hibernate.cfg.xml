@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<!-- database connection setting -->
+		<property name="connection.url">jdbc:mysql://localhost:3306/ivydemo</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+
+		<!-- disable the second level cache -->
+		<property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+		
+		<property name="show_sql">true</property>
+
+		<property name="format_sql">true</property>
+		<!-- 
+			update: if table is alreay there it is used as it is...
+					but if the pojo have different field than actual table then table is going to be updated
+					
+			create: it will drop the previus table and create new one each time , never used in production env
+			create-drop (test) : used in testing evn, never in prod env, mainly we use H2 database (in memory)
+						each time once u close sessionfactory then table are deleted
+			validate( prod): it will never drop the table never change the table (prod env)
+			
+		 -->
+		<property name="hibernate.hbm2ddl.auto">update</property>
+		
+		<!-- jdbc connection pool build in  -->
+		
+		<property name="connection.pool_size">10</property>
+		
+		<!-- <property name="current_session_context_class">thread</property> -->
+		
+		<!-- <mapping class="com.demo.Book" /> -->
+		<mapping class="com.demo.Customer" />
+				
+	</session-factory>
+</hibernate-configuration>
