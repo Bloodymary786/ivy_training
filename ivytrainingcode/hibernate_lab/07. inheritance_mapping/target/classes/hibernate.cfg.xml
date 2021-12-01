@@ -5,10 +5,10 @@
 <hibernate-configuration>
 	<session-factory>
 		<!-- database connection setting -->
-		<property name="connection.url">jdbc:mysql://localhost:3306/yms_exp</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/ivydemo</property>
 		<property name="connection.username">root</property>
 		<property name="connection.password">root</property>
-		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</property>
 
 		<!-- disable the second level cache -->
@@ -32,15 +32,17 @@
 		<!-- <property name="current_session_context_class">thread</property> -->
 		
 		<!-- <mapping class="com.demo.Book" /> -->
+		<!-- -->
+				
 		<!-- <mapping class="com.demo.inh.single_table.Account" />
 		<mapping class="com.demo.inh.single_table.SavingAccount" />
-		<mapping class="com.demo.inh.single_table.CurrentAccount" /> -->
-				
-	<!-- 	<mapping class="com.demo.inh.joined.Account" />
-		<mapping class="com.demo.inh.joined.SavingAccount" />
-		<mapping class="com.demo.inh.joined.CurrentAccount" /> -->
+		<mapping class="com.demo.inh.single_table.CurrentAccount" />  -->
 		
-			<mapping class="com.demo.inh.table_per_class.Account" />
+	 	<!-- <mapping class="com.demo.inh.joined.Account" />
+		<mapping class="com.demo.inh.joined.SavingAccount" />
+		<mapping class="com.demo.inh.joined.CurrentAccount" />  -->
+		
+	 	<mapping class="com.demo.inh.table_per_class.Account" />
 		<mapping class="com.demo.inh.table_per_class.SavingAccount" />
 		<mapping class="com.demo.inh.table_per_class.CurrentAccount" />
 	</session-factory>

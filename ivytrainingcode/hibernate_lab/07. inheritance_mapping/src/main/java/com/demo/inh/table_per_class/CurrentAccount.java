@@ -3,9 +3,9 @@ package com.demo.inh.table_per_class;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
+@Entity
 public class CurrentAccount extends Account {
-	
+	@Column(nullable = false)
 	private double overdraft;
 
 	public CurrentAccount(String accountHolderName, double balance, double overdraft) {

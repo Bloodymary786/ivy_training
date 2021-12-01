@@ -4,9 +4,10 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
+@Entity
+@DiscriminatorValue(value = "SA")
 public class SavingAccount extends Account {
-	
+	//@Column(nullable = false)
 	private double intrestRate;
 
 	public SavingAccount() {}

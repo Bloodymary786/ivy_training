@@ -3,9 +3,10 @@ package com.demo.inh.table_per_class;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
+@Entity
 public class SavingAccount extends Account {
 	
+	@Column(nullable = false)
 	private double intrestRate;
 
 	public SavingAccount(String accountHolderName, double balance, double intrestRate) {

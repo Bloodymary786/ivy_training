@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!--  2 type of injection in xml : ctr injection vs setter injection -->
+	
+	<bean id="car" class="com.demo.Car">
+		<constructor-arg index="0" value="raja"/>
+		<constructor-arg index="1" ref="tyre"/>
+	</bean>
+	
+	
+	<!-- <bean id="car" class="com.demo.Car">
+		<property name="passanger" value="raj"/>
+		<property name="tyre" ref="tyre"/>
+	</bean> -->
+	
+	<!-- <bean id="tyre" class="com.demo.MrfTyre"/> -->
+	<bean id="tyre" class="com.demo.CeatTyre"/>
+</beans>

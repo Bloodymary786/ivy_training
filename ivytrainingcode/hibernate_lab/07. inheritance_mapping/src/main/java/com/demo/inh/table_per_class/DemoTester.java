@@ -16,12 +16,14 @@ public class DemoTester {
 
 		session.getTransaction().begin();
 
-		List<Account> accounts = session.createQuery("select a from Account a").getResultList();
-
-		accounts.forEach(ac-> System.out.println(ac));
-
-//		Account account1=new SavingAccount("ravi", 5600, .4);
-//		Account account2=new CurrentAccount("umesh", 5600, 400);
+		List<Account> accounts = session.createQuery("select a from Account a",Account.class).getResultList();
+//
+		for(Account account: accounts) {
+			System.out.println(account);
+		}
+//
+//		Account account1=new SavingAccount("ekta", 5100, .4);
+//		Account account2=new CurrentAccount("gunika", 5690, 400);
 //		
 //		session.save(account1);
 //		session.save(account2);

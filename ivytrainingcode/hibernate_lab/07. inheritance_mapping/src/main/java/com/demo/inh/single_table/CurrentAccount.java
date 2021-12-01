@@ -3,10 +3,11 @@ package com.demo.inh.single_table;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
-
+@Entity
+@DiscriminatorValue(value = "CA")
 public class CurrentAccount extends Account {
 	
+	//@Column(nullable = false)
 	private double overdraft;
 
 	public CurrentAccount() {}

@@ -7,8 +7,11 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Account {
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)// will not work?
 	
 	private int accountId;
 	private String accountHolderName;

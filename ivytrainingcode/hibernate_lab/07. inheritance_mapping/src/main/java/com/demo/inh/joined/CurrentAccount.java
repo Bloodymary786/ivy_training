@@ -3,9 +3,10 @@ package com.demo.inh.joined;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
+@Entity
+@Table(name="curr_account")
 public class CurrentAccount extends Account {
-	
+	@Column(nullable = false)
 	private double overdraft;
 
 	public CurrentAccount(String accountHolderName, double balance, double overdraft) {
