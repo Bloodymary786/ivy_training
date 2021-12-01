@@ -48,6 +48,7 @@ public class AddCustomers {
 			e.printStackTrace();
 			tx.rollback();
 		}
+		session.close();
 		
 		System.out.println("---------------------------");
 		factory.close();

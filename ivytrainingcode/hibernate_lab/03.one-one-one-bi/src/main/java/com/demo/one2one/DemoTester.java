@@ -49,11 +49,11 @@ public class DemoTester {
 		session.persist(parking4);
 		session.persist(parking5);
 		
-//		session.persist(employee1);
-//		session.persist(employee2);
-//		session.persist(employee3);
-//		session.persist(employee4);
-//		session.persist(employee5);
+		session.persist(employee1);
+		session.persist(employee2);
+		session.persist(employee3);
+		session.persist(employee4);
+		session.persist(employee5);
 		
 		session.getTransaction().commit();
 		

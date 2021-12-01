@@ -33,20 +33,45 @@ public class DemoTester {
 		SessionFactory factory = HibernateSessionFactory.getSessionFactory();
 		Session session = factory.openSession();// getCurrentSession (web application spring)
 		
-		//select p from Parking p
+		Transaction tx=session.getTransaction();
+		
+		//if u delete a parking corrosponding emp is also deleted
+//		try {
+//			tx.begin();
+//			
+//			Parking parking=session.get(Parking.class, 2);
+			//session.delete(parking);
+//			session.save(parking1);
+//			session.save(parking2);
+//			session.save(parking3);
+//			session.save(parking4);
+//			session.save(parking5);
+			
+			//session.save(employee1); this is not req because of cascading as if u save parking emp is saved automatically
+			
+			
+//			
+//			tx.commit();
+//		}catch(HibernateException ex) {
+//			ex.printStackTrace();
+//			tx.rollback();
+//		}
+//		
+		
+//		//select p from Parking p
 		List<Parking>parkings=session
-				.createQuery("from Parking p join fetch p.employee Employee").getResultList();
+				.createQuery("from Parking p join fetch p.employee Employee", Parking.class).getResultList();
 		System.out.println("------------------------------------");
 		for(Parking parking : parkings) {
 			System.out.println(parking);
-			//System.out.println(parking.getEmployee());
+			System.out.println(parking.getEmployee());
 		}
 		
 		session.close();
 		
-		for(Parking parking : parkings) {
-			System.out.println(parking.getEmployee());
-		}
+//		for(Parking parking : parkings) {
+//			System.out.println(parking.getEmployee());
+//		}
 		
 		factory.close();
 		

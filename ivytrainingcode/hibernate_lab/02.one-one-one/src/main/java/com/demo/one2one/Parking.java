@@ -10,12 +10,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 //1 to 1: eager 
-
+@Entity
+@Table(name = "parking_table")
 public class Parking {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int partingId;
+	
 	private String parkingLocation;
 
+	@JoinColumn(name = "empId_fk")
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Employee employee;
 
 	public Parking(String parkingLocation) {
