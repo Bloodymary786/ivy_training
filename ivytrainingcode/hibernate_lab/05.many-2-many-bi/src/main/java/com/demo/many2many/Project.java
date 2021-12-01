@@ -10,13 +10,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
+@Entity
+@Table(name="p_table")
 public class Project {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int projectId;
 	private String projectName;
 	
+	@ManyToMany(mappedBy = "projects")
 	private List<Employee> employees = new ArrayList<Employee>();
 
 	public Project() {

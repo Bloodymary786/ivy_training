@@ -13,13 +13,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
-
+@Entity
+@Table(name = "dept_table")
 public class Department {
-	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer deptId;
 
 	private String detpName;
 
+	@OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
 	private List<Employee> employees = new ArrayList<Employee>();
 
 	public Department(String detpName) {

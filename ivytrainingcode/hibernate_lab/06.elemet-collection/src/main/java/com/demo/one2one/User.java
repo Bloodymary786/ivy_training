@@ -5,22 +5,19 @@ import java.util.*;
 import javax.persistence.*;
 
 //Element collection? what is the need?
-
+@Table(name="user_table")
+@Entity
 public class User {
-	
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String username;
 	private String password;
 	
+	@ElementCollection
+	@CollectionTable(name="user_profile")
 	private List<String> profiles = new ArrayList<String>();
-
-	private List<String> emails = new ArrayList<String>();
-
+	
 	public User() {
-	}
-
-	public void addEmail(String email) {
-		emails.add(email);
 	}
 
 	public void addProfile(String profile) {
@@ -64,12 +61,5 @@ public class User {
 		this.profiles = profiles;
 	}
 
-	public List<String> getEmails() {
-		return emails;
-	}
-
-	public void setEmails(List<String> emails) {
-		this.emails = emails;
-	}
 
 }

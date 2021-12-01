@@ -15,9 +15,7 @@ public class DemoTester {
 		session.getTransaction().begin();
 		
 		User user=new User("raj", "raj123");
-		user.addEmail("raj@gmail.com");
-		user.addEmail("raj@yahoo.com");
-		user.addEmail("raj@ymsli.com");
+		
 		
 		user.addProfile("admin");
 		user.addProfile("mgr");
