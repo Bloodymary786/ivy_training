@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="sch" class="com.demo4.School">
+		<property name="schoolName" value="BVB school"></property>
+		<property name="teachers">
+			<map>
+				<entry key="Anita" value-ref="t1"></entry>
+				<entry key="Gangan" value-ref="t2"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="t1" class="com.demo4.Teacher">
+		<property name="name" value="Anita"/>
+		<property name="qualification" value="MTech"/>
+		<property name="rating" value="8"/>
+		<property name="effectiveTeacher" value="true"/>
+	</bean>
+	<bean id="t2" class="com.demo4.Teacher">
+		<property name="name" value="Gangan"/>
+		<property name="qualification" value="BTech"/>
+		<property name="rating" value="4"/>
+		<property name="effectiveTeacher" value="true"/>
+	</bean>
+	
+</beans>

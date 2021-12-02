@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!--  collection mapping in xml
+		1. list
+		2. set: dont allowed duplicate
+		3. map: k-> v
+		4. properties: k->v (if booth k and v are string)
+	 -->
+	<bean id="shape" class="com.demo1.Shape">
+		<property name="points">
+			<list>
+				<ref bean="p1"/>
+				<ref bean="p2"/>
+				<ref bean="p3"/>
+				<ref bean="p4"/>
+			</list>
+		</property>
+	</bean>
+
+ <bean id="p4" class="com.demo1.Point">
+		<property name="x" value="1" />
+		<property name="y" value="1" />
+	</bean>
+	
+	<bean id="p1" class="com.demo1.Point">
+		<property name="x" value="1" />
+		<property name="y" value="1" />
+	</bean>
+
+	<bean id="p2" class="com.demo1.Point">
+		<property name="x" value="3" />
+		<property name="y" value="-1" />
+	</bean>
+
+	<bean id="p3" class="com.demo1.Point">
+		<property name="x" value="10" />
+		<property name="y" value="20" />
+	</bean>
+
+</beans>
