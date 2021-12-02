@@ -7,7 +7,6 @@ public class TouristApp {
 	private String companyName;
 	private Map<String, String> places;
 
-	
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}

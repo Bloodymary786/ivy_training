@@ -10,12 +10,12 @@
 	 -->
 	<bean id="shape" class="com.demo1.Shape">
 		<property name="points">
-			<list>
+			<set>
 				<ref bean="p1"/>
 				<ref bean="p2"/>
 				<ref bean="p3"/>
 				<ref bean="p4"/>
-			</list>
+			</set>
 		</property>
 	</bean>
 

@@ -2,7 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
+	<!-- properties vs map
+		 k: string			k:anyting
+		 v: string			v:anything		 -->
 	<bean id="touristApp" class="com.demo2.TouristApp">
 		<property name="companyName" value="durga tourist INC"/>
 		<property name="places">
