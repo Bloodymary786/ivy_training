@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="bookCollection" class="com.demo.BookCollection">
+		<property name="bookList">
+			<list>
+				<ref bean="book1" />
+				<ref bean="book2" />
+			</list>
+		</property>
+	</bean>
+	<!-- we want to map BookLib with book collection using SPEL -->
+	<bean id="bl" class="com.demo.BookLib">
+		<property name="allBooks" value="#{bookCollection.bookList}"/> 
+		<property name="firstBook" value="#{bookCollection.getFirstBook()}"/>
+	</bean>
+	
+	<bean id="book1" class="com.demo.Book">
+		<property name="id" value="121" />
+		<property name="name" value="java basics" />
+		<property name="price" value="300" />
+	</bean>
+	
+	<bean id="book2" class="com.demo.Book">
+		<property name="id" value="128" />
+		<property name="name" value="spring basics" />
+		<property name="price" value="600" />
+	</bean>
+</beans>

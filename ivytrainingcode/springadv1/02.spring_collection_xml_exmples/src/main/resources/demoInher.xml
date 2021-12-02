@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="pshape" class="com.demo5.beaninheritance.Shape" abstract="true">
+		<property name="p1" ref="p1"/>
+	</bean>
+	
+	<bean id="shape" class="com.demo5.beaninheritance.Shape" parent="pshape">
+		<property name="p2" ref="p2"/>
+		<property name="p3" ref="p3"/>
+	</bean>
+	<bean id="p1" class="com.demo5.beaninheritance.Point">
+		<property name="x" value="2" />
+		<property name="y" value="12" />
+	</bean>
+
+	<bean id="p2" class="com.demo5.beaninheritance.Point">
+		<property name="x" value="2" />
+		<property name="y" value="-2" />
+	</bean>
+
+
+	<bean id="p3" class="com.demo5.beaninheritance.Point">
+		<property name="x" value="92" />
+		<property name="y" value="42" />
+	</bean>
+
+</beans>

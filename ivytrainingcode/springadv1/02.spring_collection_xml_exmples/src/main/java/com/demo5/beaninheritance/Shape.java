@@ -1,0 +1,30 @@
+package com.demo5.beaninheritance;
+
+import java.util.*;
+
+public class Shape {
+	private Point p1;
+	private Point p2;
+	private Point p3;
+
+	public void printShape() {
+		System.out.println(p1);
+		System.out.println(p2);
+		System.out.println(p3);
+
+	}
+
+	public void setP1(Point p1) {
+		this.p1 = p1;
+	}
+
+	public void setP2(Point p2) {
+		this.p2 = p2;
+	}
+
+	public void setP3(Point p3) {
+		this.p3 = p3;
+	}
+
+	
+}
