@@ -13,7 +13,7 @@ import com.customerapp.dao.EmployeeDao;
 import com.customerapp.service.aspects.MyLogging;
 //SL =BL + CCC
 @Service(value = "empService")
-@Transactional// around advice to handle ccc ie tx in declartive way!
+@Transactional   // around advice to handle ccc ie tx in declartive way!
 public class EmployeeServiceImpl implements EmployeeService {
 
 	private EmployeeDao employeeDao;
@@ -22,7 +22,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public EmployeeServiceImpl(EmployeeDao employeeDao) {
 		this.employeeDao = employeeDao;
 	}
-
+	@MyLogging
 	@Override
 	public List<Employee> getAllEmployee() {
 		return employeeDao.getAllEmployee();
