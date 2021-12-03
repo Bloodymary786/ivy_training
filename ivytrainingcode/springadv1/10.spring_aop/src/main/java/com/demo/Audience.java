@@ -6,35 +6,32 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
 @Component
 @Aspect
 public class Audience {
 
-	// @After vs @AfterReturning
-	// @AfterReturning only get execute iff method executed successfully!
-	// @After: it run dont mattter whether method exe successfully or not
-
-	//Spring sec, tx mgt @Tranactional annotation 
+	//Around advice
 	@Around("execution(public void doMagic())")
-	public Object aroundAdEx(ProceedingJoinPoint pjp) throws Throwable {
-		System.out.println("advice started....");
-		//Object val = pjp.proceed();
-
-		System.out.println("advice finished...");
-		return null;
+	public Object clappingAround(ProceedingJoinPoint joinPoint) throws Throwable {
+		System.out.println("beginging of around method ...");
+		
+		Object obj=joinPoint.proceed();
+		
+		System.out.println("end of around method ...");
+		return obj;
 	}
-
-//	@AfterReturning("execution(public void doMagic())")
-//	public void clapping() {
-//		System.out.println("wow, maza aa gaya!!");
-//	}
-// Spring mvc excption handing
 	
+	//@Before("execution(public void doMagic())")
+	//@After("execution(public void doMagic())")
+	//@AfterReturning("execution(public void doMagic())")
+//	public void clapping() {
+//		System.out.println("clapping ... we enjoying the magic...");
+//	}
 //	@AfterThrowing("execution(public void doMagic())")
 //	public void callDr() {
-//		System.out.println("call Dr now I say Now !!");
+//		System.out.println("call the dr now...");
 //	}
-
 }
