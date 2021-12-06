@@ -1,0 +1,1423 @@
+
+
+Struts classic ( Struts 1.3)
+_____________________________________________
+
+Topics:
+_____________________________________________
+	=>MVC
+
+	=>Need of an framework like struts?
+
+	=>Introduction to Struts
+
+	=>Hello World Application
+
+	=>Struts 1 tags basic 
+
+	=>Struts Arch. and Struts components
+
+	=>Revisiting Hello world with validation and resource bundle
+
+	=>Revisiting book advice application
+
+	=>DynaActionForm
+
+	=>Struts ForwardAction 
+
+	=>Multiple configuration files example
+
+	=>DispatchAction
+
+	=>Using RequestProcessor for ensure loggin user
+
+	=>Validation Framework
+
+
+_____________________________________________
+
+Topics: Need of an framework like struts?
+_____________________________________________
+
+
+	We can create own MVC 2 application in servlet jsp 
+	lets do it.
+
+	So that we can understand need of an framework.
+
+
+
+
+Need of an framework like struts?
+________________________________________________
+
+	ilities of SW projects
+	_____________________
+
+	=> Flexibility
+
+	=> Maintainability
+
+	=> Extensibility
+
+
+	Problem with our mvc servlet jsp application
+	________________________________________
+
+	A single MVC app will have many models, views, and controllers
+
+
+	As application grows no of controller incresease...problem
+
+
+	The controllers three main tasks	
+	_______________________________________
+
+	1. accept request parameter
+	################################
+	How it can be done better?
+
+		# Give this task to a separate form validation component 
+		that can get the form parameters, convert them, validate them, 
+		handle validation errors, and create an object to hold 
+		the parameter values.
+
+
+
+
+	2. Invoke the model
+	################################
+		# Do as usual...
+
+
+	3. Dispaching to the views
+	###############################
+
+		Why not make this declarative as well? 
+						
+		That way, based on the request URL,
+		the controller can tell	which view to dispatch to.
+
+		(loose coupling!)
+
+
+
+
+
+
+New and (shorter) controller pseudo-code
+______________________________________________
+
+
+public class ControllerServlet extends HttpServlet {
+
+public void doPost(request, response) {
+
+	// call a validation component declaratively
+	// (have it handle validation errors too!)
+
+	// declaratively invoke a request processing
+
+	// component, to call a Model component
+
+	// dispatch to the view JSP declaratively
+	}
+}
+
+
+
+Will come back on this latter............
+
+
+
+
+_____________________________________________
+
+Topics: What is struts?
+_____________________________________________
+
+	# Open source framework, based on MVC Architecture.
+
+	# The struts framework is used within the web tier
+
+_____________________________________________
+
+Topics: hello world
+_____________________________________________
+
+
+Steps:
+
+
+
+1: configure jar files, Add to build path
+
+
+2: Configure front controller (in web.xml)
+############################################
+
+ <servlet>
+    <servlet-name>action</servlet-name>
+    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+    <init-param>
+      <param-name>config</param-name>
+      <param-value>/WEB-INF/struts-config.xml</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+ </servlet>
+
+  <servlet-mapping>
+    <servlet-name>action</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+
+3:Configure struts-config.xml 
+##################################
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+          "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+
+<struts-config>
+
+    <form-beans>
+        <form-bean name="LoginForm" type="com.forms.LoginForm"/>
+    </form-beans>
+
+    <action-mappings>
+        <action input="/login.jsp" name="LoginForm" path="/Login" scope="request" type="com.actions.LoginAction">
+            <forward name="success" path="/success.jsp" />
+            <forward name="failure" path="/failure.jsp" />
+        </action>
+    </action-mappings>
+
+</struts-config>
+
+
+
+
+4:Create an action class LoginAction and write BL into it........
+##################################################################
+
+
+com.actions
+
+
+public class LoginAction extends org.apache.struts.action.Action {
+   
+   
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        LoginForm loginForm = (LoginForm) form;
+        if (loginForm.getUserName().equals(loginForm.getPassword())) {
+            return mapping.findForward("success");
+        } else {
+            return mapping.findForward("failure");
+        }
+    }
+}
+
+
+
+5:write form bean
+########################################
+
+com.forms
+ 
+public class LoginForm extends org.apache.struts.action.ActionForm {
+
+	private String userName;
+	private String password;
+
+	
+	// getter setters
+
+}
+
+
+
+
+7: create views
+########################################
+
+index.jsp
+--------------
+
+<form action="Login.do">
+	Enter name:<input type="text" name="userName"/>
+	Enter password:<input type="text" name="password"/>
+	<input type="submit"/>
+</form>
+
+
+
+success.jsp
+-------------
+
+
+failure.jsp
+-------------
+
+
+
+
+
+
+response.sendRedirect()
+--------------------------
+redirect="true"
+
+
+
+
+
+___________________________________________
+Topic : Struts tags basic 
+___________________________________________
+
+
+	What one should know in JSP ?
+	_____________________________
+	 what is the best way to respsent data in view layer?
+
+	# Don't use scriptlet, perfer JSTL and custom tag
+	# use struts tags
+
+
+
+
+	Example:Employee Mgt Application
+	####################################
+
+
+	1. Create DAO DTO and Implemenatation with collection then jdbc
+
+
+
+	public class Employee {
+		private String id;
+		private String name;
+		private String address;
+
+	}
+
+
+	2. view using Using JSTL
+	------------------------------
+	<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+	<c:forEach var="emp" items="${empList}">
+		 ${emp.id} ${emp.name } ${emp.address }<br/>
+		<br />
+	</c:forEach>
+
+
+	struts 1: hv its own tag lib
+		html , bean, logic
+
+
+	JSTL is not good? it more then good
+
+
+
+ 	view Using Struts1 logic and bean tages
+	----------------------------------------
+	<%@taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
+	<%@taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
+
+ 
+	<logic:iterate name="empList" id="emp">
+		<p>
+			<bean:write name="emp" property="id" />
+			,
+			<bean:write name="emp" property="name" />
+			,
+			<bean:write name="emp" property="address" />
+
+		</p>
+	</logic:iterate>
+
+
+
+Adding an new employee
+-------------------------
+
+ <html:form action="/addEmployee" >
+        Employee id :<html:text name="addEmployeeFormBean" property="id" />
+        Employee Name :<html:text name="addEmployeeFormBean" property="name" />
+        Employee Address  :<html:text name="addEmployeeFormBean" property="address" />
+ 
+        <html:submit value="AddEmployee" />
+    </html:form>
+</body>
+
+
+
+	public class AddEmployeeAction extends Action{
+	
+		@Override
+		public ActionForward execute(ActionMapping mapping, ActionForm form,
+				HttpServletRequest request, HttpServletResponse response)
+				throws Exception {
+			System.out.println("execute method is called....");
+			EmployeeDao dao=new EmployeeDaoImp();
+			EmployeeFormBean bean=(EmployeeFormBean) form;
+			Employee employee=new Employee(bean.getId(), bean.getName(), bean.getAddress());
+			dao.addEmployee(employee);
+			request.setAttribute("employee", employee);
+			return mapping.findForward("success");
+		}
+	
+		
+	}
+
+
+
+		<action input="/addemployee.jsp" validate="true" name="addEmployeeFormBean" path="/addEmployee" scope="request"
+			type="com.yms.web.controllers.actions.AddEmployeeAction">
+			<forward name="success" redirect="true" path="/employeeAdded.jsp" />
+			<forward name="failure" path="/failure.jsp" />
+		</action>
+	</action-mappings>
+
+
+
+
+
+Action to action mapping
+-----------------------------
+
+http://stackoverflow.com/questions/10776051/struts-1-3-action-forward-parameter
+_______________________________________
+Topic : Struts Arch. and Struts components
+______________________________________________
+
+
+
+Struts Framework architecuture
+________________________________
+
+
+	Struts request life cycle
+	############################
+
+	1. client request map to front controller (ActionServlet) with *.do request
+
+	2. ActionServlet consult struts-config.xml to decide which Action (BC) will take on
+
+	3. ActionServlet consult to struts-config.xml to create an object of ActionForm
+
+		ActionForm acting as backing form bean
+
+		Attribute of ActionForm bean
+		------------------------
+			# has attributs same as http request submitted from form
+			# created per request
+
+	
+	4. Then Action(BC) execute business logic with the help of model (DAO,DTOs)
+		and put the result in appropriate scope (request/ session )
+		and return the an object of ActionForward
+
+	5. ActionServlet then dispach controll to suitable view by consulting struts-config.xml
+
+	6. Response is provided to the user
+
+
+
+
+RequestProcessor :
+the heart of Controller (Chain of Responsibility Pattern)
+___________________________________________________________
+
+What it does?
+################
+
+	1. SelectAction    
+		Determine the ActionMapping associated with this path.
+ 
+	2. CreateActionForm    
+		Instantiate (if necessary) the ActionForm associated 
+		with this mapping (if any) and place it into the appropriate scope.
+
+ 
+	3. PopulateActionForm    
+		Populate the ActionForm associated with this request, if any. 
+
+	4. ValidateActionForm   
+		 Perform validation (if requested) on the ActionForm associated 
+		with this request (if any). 
+
+	5. SelectInput    
+		If validation failed, select the appropriate 
+		ForwardConfig for return to the input page. 
+
+
+	6. CreateAction   
+		 Create  an instance of the class specified by 
+		the current ActionMapping
+
+	7. ExecuteAction    
+		This is the point at which your Action's execute method will be called. 
+		PerformForward    
+
+
+	Finally, the process method of the RequestProcessor takes the 
+	ActionForward returned by your Action class, 
+	and uses it to select the next resource (if any). 
+
+	Most often the ActionForward leads to the presentation 
+	page that renders the response.
+
+
+________________________________________________________________
+
+Topic: Revisiting Hello world with validation and resource bundle
+________________________________________________________________
+
+
+
+Steps:
+
+ 	1: configure jar files, Add to build path
+
+
+	2:Configure front controller (in web.xml)
+	###########################################
+
+ 	<servlet>
+   	 <servlet-name>action</servlet-name>
+    	<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+   	<init-param>
+     	 <param-name>config</param-name>
+      	<param-value>/WEB-INF/struts-config.xml</param-value>
+    	</init-param>
+    	<load-on-startup>2</load-on-startup>
+	 </servlet>
+
+ 	 <servlet-mapping>
+   	 <servlet-name>action</servlet-name>
+   	 <url-pattern>*.do</url-pattern>
+  	</servlet-mapping>
+
+  	<welcome-file-list>
+    	<welcome-file>index.jsp</welcome-file>
+  	</welcome-file-list>
+
+
+
+
+	3:Configure struts-config.xml 
+	###########################################
+
+
+	<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+	<!DOCTYPE struts-config PUBLIC
+        	  "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+         	 "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+
+	<struts-config>
+
+    	<form-beans>
+        	<form-bean name="LoginForm" type="com.LoginForm"/>
+    	</form-beans>
+
+    	<action-mappings>
+        	<action input="/index.jsp" name="LoginForm" path="/Login" scope="session" 			type="com.LoginAction" validate="true">
+
+            <forward name="success" path="/success.jsp" />
+            <forward name="failure" path="/failure.jsp" />
+        </action>
+    </action-mappings>
+
+	</struts-config>
+
+
+
+
+	4:Create an action class LoginAction and write BL into it........
+	################################################################
+
+
+	public class LoginAction extends org.apache.struts.action.Action {
+    	/* forward name="success" path="" */
+    	private final static String SUCCESS = "success";
+    	private final static String FAILURE = "failure";
+   
+   	 public ActionForward execute(ActionMapping mapping, ActionForm form,
+          	  HttpServletRequest request, HttpServletResponse response)
+          	  throws Exception {
+       			 LoginForm loginForm = (LoginForm) form;
+      		  if (loginForm.getUserName().equals(loginForm.getPassword())) {
+          		  return mapping.findForward(SUCCESS);
+       		 } else {
+           	 return mapping.findForward(FAILURE);
+        	}
+    	}
+	}
+
+
+
+	5:write form bean
+	########################
+
+	public class LoginForm extends org.apache.struts.action.ActionForm {
+
+	private String userName;
+	private String password;
+
+	public LoginForm() {
+	}
+
+	public ActionErrors validate(ActionMapping mapping,
+			HttpServletRequest request) {
+		ActionErrors errors = new ActionErrors();
+		if (userName == null || userName.length() < 1) {
+			errors.add("userName", new ActionMessage("error.userName.required"));
+			// add 'error.name.required' key to your resources
+		}
+		if (password == null || password.length() < 1) {
+			errors.add("password", new ActionMessage("error.password.required"));
+			// add 'error.name.required' key to your resources
+		}
+		return errors;
+	}
+
+	// getter setters
+
+
+
+	6. create resorce properties files (put in resouces folder)
+	######################################
+
+	MessageResources.properties
+
+
+		error.userName.required = User Name is required.
+		error.password.required = Password is required.
+
+
+
+	7. Enable resorce properties in struts-config.xml
+	#######################################################
+		<message-resources parameter="com.MessageResources"/>
+
+
+
+
+	8: create views
+        ####################
+
+		<div style="color: red">
+			<html:errors property="userName" />
+		</div>
+		
+
+
+
+
+	index.jsp
+	--------------
+	<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+
+	<div style="color:red">
+    		<html:errors />
+    	</div>
+    	<html:form action="/Login" >
+       		 User Name :<html:text name="LoginForm" property="userName" /><br/>
+        	Password  :<html:password name="LoginForm" property="password" /><br/>
+        	<html:submit value="Login" />
+   	 </html:form>
+    
+	</body>
+
+
+
+	success.jsp
+	--------------
+
+	<%@taglib prefix="bean" uri="http://struts.apache.org/tags-bean"%>
+
+            <bean:write name="LoginForm" property="userName"/>
+       
+
+
+http://www.onjava.com/pub/a/onjava/2005/11/02/what-is-struts.html?page=1
+
+
+________________________________________________________
+
+Topic:  Revisiting book advice application
+__________________________________________________________
+
+
+	
+
+
+____________________________________________________
+Topic: using DynaActionForm
+____________________________________________________
+
+
+	=>DynaActionForm class is an interesting feature to 
+	  let you create a form bean dynamically and declaratively. 
+
+
+	=>It enables you to create a “virtual” form bean in Struts 
+	  configuration file instead of create a real Java form bean class.
+
+
+	=> It can avoid you to create many simple 
+	    but tedious form bean classes.
+
+
+
+
+	Example: DynaActionForm,put this mapping in place of FormBean
+	#############################################################3
+
+
+	<form-beans>
+   	 <form-bean name="LoginForm" type="org.apache.struts.action.DynaActionForm">
+       		 <form-property name="userName" type="java.lang.String" />
+        	<form-property name="password" type="java.lang.String" />
+    	</form-bean>
+	</form-beans>
+
+
+
+
+	change LoginAction
+	-----------------------------
+
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)throws Exception {
+
+    		DynaActionForm loginForm = (DynaActionForm) form;
+
+    		String userName = loginForm.get("userName").toString();
+    		String password = loginForm.get("password").toString();
+
+    		if(userName.equals(password))
+   		 {
+    			return mapping.findForward("success");
+   		 }
+    		else
+   		 {
+    			return mapping.findForward("failure");
+    		}
+	  }
+	}
+
+
+
+
+
+
+
+
+
+
+____________________________________________________
+Topic: Struts ForwardAction Example
+____________________________________________________
+
+
+	=>Struts comes with a special action controller class called 
+	ForwardAction (org.apache.struts.actions.ForwardAction)
+
+	=> it do the “forward-only” task as name described, and allow you to 
+	access the specified JSP page directly.
+
+
+	Example:
+	############
+
+
+	create an jsp
+	---------------------
+		<jsp:forward page="Welcome.do"/>
+
+
+
+	map action for an jsp
+	---------------------------
+ 
+	<action-mappings>
+ 
+		<action
+			path="/Welcome"
+			type="org.apache.struts.actions.ForwardAction"
+			parameter="/pages/Welcome.jsp"/>
+ 
+	</action-mappings>
+ 
+
+
+
+
+________________________________________________________
+Topic: Multiple configuration files example
+________________________________________________________
+
+
+Step: 
+
+	1. create two configuration files:
+		struts-config-1.xml and struts-config-1.xml
+
+
+	2. and map like:
+
+	<servlet>
+    		<servlet-name>action</servlet-name>
+    		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+
+    	<init-param>
+        	<param-name>config</param-name>
+        	<param-value>
+         		/WEB-INF/struts-config-1.xml, /WEB-INF/struts-config-2.xml
+        	</param-value>
+    	</init-param>
+
+    	<load-on-startup>1</load-on-startup>
+  	</servlet>
+
+
+
+
+
+
+
+
+
+
+__________________________________________________
+
+Topic: DispatchAction
+___________________________________________________
+
+
+	Why DispatchAction?
+	####################
+
+	=> The DispatchAction class (org.apache.struts.actions.DispatchAction) 
+         	provides a way to group all related functions into a single action class.
+
+	=> It’s a useful mechanism to avoid create separate
+		 action classe for each function.
+
+
+
+	Use case: CDUD
+	###############
+
+	public class UserAction extends DispatchAction{
+
+		public ActionForward add(ActionMapping mapping, ActionForm form,
+				HttpServletRequest request, HttpServletResponse response)
+				throws Exception {
+			System.out.println("Add.........");
+		    		return mapping.findForward("success");
+		  
+		
+		}
+	
+		public ActionForward del(ActionMapping mapping, ActionForm form,
+				HttpServletRequest request, HttpServletResponse response)
+				throws Exception {
+			System.out.println("del.........");
+		    		return mapping.findForward("success");
+		  
+		
+		}
+	
+		public ActionForward modify(ActionMapping mapping, ActionForm form,
+				HttpServletRequest request, HttpServletResponse response)
+				throws Exception {
+			System.out.println("modify.........");
+		    		return mapping.findForward("success");
+		 	
+		}
+	}
+
+
+
+	Mapping
+	###########
+
+	<action path="/User"
+			scope="session" type="com.UserAction" parameter="function">
+			<forward name="success" path="/success.jsp" />
+		</action>
+
+
+	How to invok?
+	################
+		User.do?function=del
+
+/customer.do?choice=add
+
+
+
+
+
+____________________________________________________________
+Topic: Using RequestProcessor for ensure loggin user
+_________________________________________________________
+
+
+
+	Relation between ActionServlet and  RequestProcessor?
+	____________________________________________________________
+
+	1. ActionServlet is responsiable for initializing a struts app configuration 
+	   from struts config files and receice all request from the application
+
+	2. Before redirecting to the programmer's action (ie BC), ActionServlet creates an 
+	   object of RequestProcessor.
+
+	3. ActionServlet delegate its processing to the RequestProcessor
+
+	4. The RequestProcessor class in the Struts distribution provides 
+	   a default implementation for each of the request-processing steps.
+
+	5. That means you can override only the methods that interest you, and
+	 use default implementations for rest of the methods.
+	
+
+
+
+
+	What RequestProcessor does?
+	______________________________
+	Chain of responsibility design pattern
+
+
+
+	RequestProcessor responsibilities:
+
+	    # Determine path,
+
+	    # Handle Locale
+
+	    # Process content and encoding type
+    	   
+	    # Process cache headers
+
+	    # Pre Processing hook
+	   
+	    # Determine mapping
+
+	    # Determine roles
+
+	    # Process and validate actionForm
+
+	    # Return a response
+
+
+
+
+	How to use capabilities of RequestProcessor?
+	____________________________________________
+
+	 The processPreprocess method in RequestProcessor can be overridden 
+		to do some common tasks such as
+
+		1. Validating User Session
+
+		2. Validating User Role
+
+		3. Putting Action Form's Data Into User Log Table
+
+
+	user request----> 
+			ActionServlet--->
+					RequestProcessor --> 
+						if processPreprocess return true
+
+
+
+
+
+
+
+	Steps: Implement custom request processor in struts.
+	____________________________________________
+	http://makhaer.blogspot.in/2009/07/custom-request-processor-in-struts.html
+
+
+	1. Create an class that extends RequestProcessor and override 
+	processPreprocess method!
+	______________________________________________________
+
+
+	class LoggedInRequestProcessing extends RequestProcessor
+	{
+
+	protected boolean processPreprocess (HttpServletRequest request,HttpServletResponse response)
+	{
+      
+
+		HttpSession session = request.getSession(false);
+	
+	 	 //If user is trying to access login page then don't check
+  
+		if(request.getServletPath().equals("/login.do") )
+     		 return true;
+  
+		//Check if userName attribute is there is session.If so, it means user has allready logged in
+ 
+		 if( session != null && session.getAttribute("userName") != null)
+		  {
+     		
+		//Use DB to check
+			boolean validRole = checkUserRoleFromDB(session.getAttribute("userName"));
+
+			if(validRole)
+				return true;
+
+		 }
+ 
+	    else
+		{
+	      try{
+        	  //If no redirect user to login Page
+	          request.getRequestDispatcher("/Login.jsp").forward(request,response);
+      		}catch(Exception ex){
+               }
+            }
+
+
+  		return false;
+		}
+
+
+	}
+	
+	
+
+ 	2. Register it in configuration file
+	______________________________________________________
+
+	<controller processorClass="com.LoggedInRequestProcessing" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+About struts1 tags:
+====================================================
+
+<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+
+
+
+employee infromation system:
+-----------------------------
+	User is going to enter employee name, system will 
+	display all the empployee records with given name
+
+
+
+public class Employee {
+	private String name;
+	private String department;
+	private String address;
+
+
+Create EmployeeDao and EmployeeDaoImplementation
+and service class........EmployeeService
+
+
+
+public interface EmployeeDao {
+ public List<Employee>searchEmployeeByName(String name);
+}
+
+
+
+index.jsp
+-------------
+
+ <html:link forward="search">Search for Employees</html:link><br>
+
+
+
+
+search.jsp
+--------------
+
+
+	<html:form action="/search">
+
+		<bean:message key="label.search.name" />
+		<html:text property="name" />
+
+	</html:form>
+
+	<br />
+	<br />
+
+
+
+	<logic:present name="searchForm" property="results">
+
+		<bean:size id="size" name="searchForm" property="results" />
+
+		<logic:equal name="size" value="0">
+			<center>
+				<b>No Employees Found</b>
+			</center>
+		</logic:equal>
+
+
+		<logic:greaterThan name="size" value="0">
+
+			<table border="1">
+				<tr>
+					<th>Department</th>
+					<th>Address</th>
+				</tr>
+
+				<logic:iterate id="result" name="searchForm" property="results">
+					<tr>
+						<td><bean:write name="result" property="department" /></td>
+						<td><bean:write name="result" property="address" /></td>
+					</tr>
+				</logic:iterate>
+
+			</table>
+
+		</logic:greaterThan>
+
+	</logic:present>
+
+
+
+
+MessageResources.properties
+
+	label.search.name=Name
+
+
+
+
+
+write form
+------------------
+
+public class SearchForm extends ActionForm
+{
+  private String name = null;
+
+  private List<Employee> results = null;
+
+
+
+Write action class
+-------------------------------
+
+
+	public final class SearchAction extends Action{
+
+
+	..............
+
+	 // Place search results in SearchForm for access by JSP.
+   	 searchForm.setResults(results);
+
+    	// Forward control to this Action's input page.
+   	 return mapping.getInputForward();
+
+
+
+
+
+
+
+mapping
+------------
+	<form-beans>
+		<form-bean name="searchForm" type="com.forms.SearchForm" />
+	</form-beans>
+
+	<!-- Global Forwards Configuration -->
+	<global-forwards>
+		<forward name="search" path="/search.jsp" />
+	</global-forwards>
+
+	<!-- Action Mappings Configuration -->
+	<action-mappings>
+		<action path="/search" type="com.actions.SearchAction"
+			name="searchForm" scope="request" validate="true" input="/search.jsp">
+		</action>
+
+
+	<message-resources parameter="MessageResources" />
+
+
+
+
+
+
+
+
+
+
+
+
+validation
+--------------
+
+Steps in Using Automatic Validation
+------------------------------------
+
+    Step1:
+	Configure struts-config.xml
+	-------------------------------
+
+        List the address of the input form
+        List the properties file (resource bundle)
+        Turn on the automatic validator
+    
+
+    Step2:
+	Edit the properties file
+	
+    
+
+    Step3:
+	Put validation rules in validation.xml
+	--------------------------------------------
+        For each field, specify one or more validation rules
+        
+	Find the name of the corresponding error message
+      
+	  Look in properties file to see how many args needed Supply arg0 ... argN as necessary
+   
+  step 4;
+	 Have form bean extend ValidatorForm/DynaValidatorForm Instead of ActionForm
+
+  Step 5:
+  	  Use <html:errors> 
+
+struts1 form validation
+=======================
+
+Two validation xml files:
+
+
+validator-rules.xml
+---------------------
+
+	declares the validation routines that should be plugged into the framework and 
+	provides logical names for each of the validations. 
+
+
+	It also defines client-side JavaScript code for each validation routine. 
+
+	Validator can be configured to send this JavaScript code to the browser
+	 so that validations are performed on the client side as well as on the server side.
+
+
+validation.xml
+---------------
+	defines which validation routines should be applied to which Form Beans. 
+
+	The definitions in this file use the logical names of Form Beans from 
+	the struts-config.xml file along with the logical names of validation 
+	routines from the validator-rules.xml file to tie the two together.
+
+
+
+
+
+
+Steps:
+========
+
+ Step 1:
+
+	create POJO that extends from ValidatorForm not form ActionForm
+				------------------------------------
+
+
+
+	public class CustomerForm extends ValidatorForm {
+     
+   	 private String name;
+    	private String telephone;
+    	private String email;
+    	private int age;
+
+
+	//gettter setters
+
+
+
+
+
+ Step 2:
+	Add Validator Plug-in in struts-config.xml
+
+
+
+	<!-- Validator Configuration -->
+	<plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+   	 <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml" />
+	</plug-in>
+
+
+
+
+
+
+Step 3:
+
+	Define validations for the form
+
+
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE form-validation PUBLIC
+          "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1.3//EN"
+          "http://jakarta.apache.org/commons/dtds/validator_1_1_3.dtd">
+<form-validation>
+<global>
+    <constant>
+    <constant-name>telephoneFormat</constant-name>
+    <constant-value>^\d{5,10}$</constant-value>
+    </constant>
+</global>
+<formset>
+    <form name="CustomerForm">
+        <field property="name" depends="required">
+            <arg key="label.name" />
+        </field>
+        <field property="age" depends="required, integer, intRange">
+            <arg0 key="label.age" />
+            <arg1 key="${var:min}" resource="false"/>
+            <arg2 key="${var:max}" resource="false"/>
+            <var>
+                <var-name>min</var-name>
+                <var-value>1</var-value>
+            </var>
+            <var>
+                <var-name>max</var-name>
+                <var-value>125</var-value>
+            </var>
+        </field>
+        <field property="telephone" depends="required, mask">
+            <arg key="label.telephone" />
+            <arg1 key="label.telephone" />
+            <var>
+                <var-name>mask</var-name>
+                <var-value>${telephoneFormat}</var-value>
+            </var>
+        </field>
+        <field property="email" depends="email">
+            <arg0 key="label.email" />
+            <arg1 key="label.email" />
+        </field>
+    </form>
+</formset>
+</form-validation>
+
+
+
+
+references:
+============
+
+how to produce client side js:
+------------------------------
+https://dzone.com/tutorials/java/struts/struts-example/struts-client-side-java-script-validation-example-1.html
+
+custom requestprocessor:
+------------------------------
+http://makhaer.blogspot.in/2009/07/custom-request-processor-in-struts.html
+
+https://en.wikipedia.org/wiki/Apache_Struts_1
+
+
+struts 1+ hibernate integration:
+-----------------------------
+http://keylesson.com/index.php/2014/10/05/struts-1-hibernate-integration-example-856/
+https://manikandanmv.wordpress.com/tag/book-store-app-in-struts/
+
+struts 1+ hibernate plugin
+--------------------------
+https://www.mkyong.com/struts/struts-hibernate-integration-example/
+
+
+struts 1+ hibernate 3+ spring 3 integration
+-----------------------------------------
+https://www.mkyong.com/struts/struts-spring-hibernate-integration-example/
+
+something about standarization:
+---------------------------------
+http://stackoverflow.com/questions/9284450/jsr-303-validation-if-one-field-equals-something-then-these-other-fields-sho
+
+histroy of validation framework and need of jsr 303
+-------------------------------------------------
+https://en.wikipedia.org/wiki/Bean_Validation
+
+jsr 303=> hibernate validator is aka imp of jsr 303
+
+Spring MVC: hibernate validation is 10000000000 better the struts 1 sick validation framework
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,256 @@
+
+Hello World Spring WS 
+---------------------
+
+step 1: POM dependencies
+
+
+<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-core</artifactId>
+			<version>2.2.1.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.3</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>javaws</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<inherited>true</inherited>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+
+
+step 2:
+-------
+	Paste following xml schema to resources folder:MathService.xsd
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ms="http://codereq.com/mathservice/schemas" elementFormDefault="qualified"
+	targetNamespace="http://codereq.com/mathservice/schemas">
+	<xs:element name="MathServiceRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Number" type="xs:integer" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MathServiceResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Number" type="xs:integer" />
+				<xs:element name="isEven" type="xs:boolean" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
+
+
+
+step 3:
+-------
+	creating java code using xjc command form resources 
+
+		/src/main/resources
+ 
+		xjc -d ../java MathService.xsd
+
+	What we get: java code generated annotated with JAXB annotations
+
+	 MathServiceRequest.java
+	MathServiceResponse.java
+	ObjectFactory.java 
+	package-info.java
+
+
+
+
+step 4: Configure the web.xml
+
+
+  <servlet>
+        <servlet-name>spring-ws</servlet-name>
+        <servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>
+        <init-param>
+      	    <param-name>transformWsdlLocations</param-name>
+      	    <param-value>true</param-value>
+    	</init-param>
+    </servlet>
+ 
+    <servlet-mapping>
+        <servlet-name>spring-ws</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+
+step 5:Develop the sever side implementation
+---------------------------------------------
+
+	Annotation used:
+	------------------
+	@Endpoint  ?
+	---------------
+		=> The endpoint implementation class is annotated with which will enable
+		 the spring’s MessageDispatcherServlet to direct the incoming requests to this class
+
+	@PayloadRoot?
+	--------------
+		=> The method which will handle the web service request will be annotated with @PayloadRoot. 
+		The @PayloadRoot will have parameters which will indicate what payload will 
+		be handled by the method. 
+
+
+	It has the following format :
+	------------------------------
+	@PayloadRoot(namespace = "http://codereq.com/mathservice/schemas" ,localPart="MathServiceRequest")
+
+	=> The attributes tell that any incoming request xml which has MathServiceRequest element in namespace 
+	 "http://codereq.com/mathservice/schemas ” will be handled by this method.
+
+
+	=> The primary method in this class is the handleMathServiceRequest which is annotated with @PayloadRoot
+
+	=> The parameter are annotated with @RequestPayload which tells that the parameter 
+	should be bound to request payload. 
+
+	Similarly, the return type MathServiceResponse is annotated with @ResponePayload 
+	which will bind the response with response payload.
+
+
+	@PayloadRoot?
+		incoming data to this method is xml ( payload means xml)
+		we are asking spring framework to handle raw xml and convert to java object
+
+	@PayloadRoot(name="namespace comes here", localPart="..")
+
+	what localPart tell us what is the root element of data we are getting for example
+	<getCustomerByIdRequest>
+		<id>123</id>
+	</getCustomerByIdRequest>
+
+we have <getCustomerByIdRequest> as root element
+
+MathServiceEndpoint.java
+-----------------------
+
+package com.codereq.springwsone;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+ 
+import com.codereq.mathservice.schemas.MathServiceRequest;
+import com.codereq.mathservice.schemas.MathServiceResponse;
+ 
+@Endpoint
+public class MathServiceEndPoint {
+ 
+    @Autowired
+    MathService mathService ;
+ 
+    @PayloadRoot(namespace = "http://codereq.com/mathservice/schemas" ,localPart="MathServiceRequest")
+    public @ResponsePayload MathServiceResponse handleMathServiceRequest(@RequestPayload MathServiceRequest mathServiceRequest) {
+        boolean isEven = getMathService().isEven(mathServiceRequest.getNumber().intValue());
+	MathServiceResponse r = new MathServiceResponse();
+	r.setIsEven(isEven);
+	r.setNumber(mathServiceRequest.getNumber());
+	return r;
+    }
+ 
+    public MathService getMathService() {
+	return mathService;
+    }
+ 
+    public void setMathService(MathService mathService) {
+	this.mathService = mathService;
+    }
+}
+
+
+
+
+MathService.java
+----------------
+package com.codereq.springwsone;
+ 
+import org.springframework.stereotype.Service;
+ 
+@Service
+public class MathService {
+   public boolean isEven(Integer number) {
+      if(number % 2 == 0) {
+	return true;
+      }
+      return false;
+   }
+}
+
+
+
+
+step 6:Spring Configuration File
+---------------------------------
+
+	=> The spring configuration file is named spring-ws-servlet.xml
+The name is derived from name of servlet and appended with servlet. <<servlet_name>>-servlet.xml. The file should be located at  <<sws_dir>/src/main/webapp/WEB-INF/:
+
+Take note of sws:dynamic-wdl element. This is element is a spring configuration which will generate the wsdl on fly .
+ Once the application is deployed, the url to access the wsdl is : http://localhost:8080/springws-one/math.wsdl .
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ref:
+---------
+http://codereq.com/web-service-using-spring/
+https://bthurley.wordpress.com/2014/04/27/web-services-with-jax-ws-jaxb-and-spring/
+http://codereq.com/web-service-using-spring/
+http://codereq.com/webservice-using-cxf-spring/
+http://codereq.com/web-service-using-spring/
+http://stackoverflow.com/questions/16591773/maintaining-web-services-built-with-wsimport

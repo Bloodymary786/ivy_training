@@ -1,0 +1,479 @@
+	------------------------------------------------
+		REST=REpresentational State Transfer 
+	------------------------------------------------
+
+	Contents:
+		# Introduction to RESTful WS and JAX-RS
+		# Hello World web service
+		# Annotations
+		# Converting data b/w xml and Java with JAXB
+		# Hello World client
+
+
+	------------------------------------------
+	Introduction to RESTful WS and JAX-RS
+	-------------------------------------------
+
+	What is REST?
+		# Architectural style which is based on web-standards and the HTTP 
+		protocol
+
+		# REST first described by Roy Fielding in 2000
+		# In a REST based architecture everything is a resource can be accessed by 		
+		http protocol
+
+		# Every resource should support the HTTP common operations
+		# REST allows that resources have different representations, e.g. text, 		
+		xml, json etc
+
+
+
+	Three Fundamental Aspects of the REST Design Pattern
+		1. Resources
+		2. URLs
+		3. Simple Operations
+
+	HTTP method (operations) supported 
+		The PUT, GET, POST and DELETE methods are typical used
+		 in REST based architectures. 
+	
+		GET	==> Reading access of the resource without side-effects 
+			==> The resource is never changed via a GET request
+
+
+		PUT 	==> creates a new resource, must also be idempotent 
+
+		DELETE 	==> removes the resources. 
+
+		POST 	==> updates an existing resource 
+
+
+
+
+	SOAP vs RESTful WS
+
+			REST					SOAP
+		______________________________________________________________________________________
+
+		Expose RESOURCES which				Expose OPERATIOSN which
+		represent DATA					represent LOGIC
+
+
+		use http (get/put/post/delete)			use post from http
+
+		Simple P to P communication			support P to P, Pub sub 									model over http
+
+
+		Support multiple data formates			support only XML and 										attachments
+
+		stateless communication 			stateless/ stateful/ 										asynch communication
+
+
+
+
+
+
+
+	Why REST ?
+
+		==> REST can be consumed by any client even a web browser with ajax and JS
+		==> REST is lightweight
+		=> Don't require XML parsing
+		=> Don't require an SOAP header for every messages
+
+	Where REST fits?
+
+	Good for :
+		# Web services
+		# Limited bandwidth(smaller message size)
+		# Limited resources( no xml parsing required)
+		# Exploring data over internet
+		# combining content from various source in an web browser
+
+
+	Restful Web Services Frameworks and APIs  : JAX-RS
+
+			=> The Java API for RESTful Web Services  JAX-RS
+
+			=> Uses annotations to make POJOs and resources available through 								HTTP 
+
+			==> Jersey is a production quality reference implementation of 									JAX-RS API from Sun
+
+			=> Other Vendors: CXF (Apache), RESTEasy(JBoss) and Restlet
+
+
+
+	
+
+----------------------------------------------------------------------------------
+	http status code:
+---------------------------------------------------------------------------------
+
+1XX : informational , ack
+2XX: Success
+	200 OK
+	201 CREATED
+	204 NO CONTENT
+
+3XX: Redirection, ask client to send req somewhere else
+	302: Found
+	304:Not modified
+	307: Temporary redirect
+
+4XX: Client Error, Client make error in request
+	400: bad request
+	401: unauthorized
+	403: forbidden, not right access
+	404: not found
+	415: unsupported media type
+
+5xx: server error, request is valid but server face problme
+	500: internal server error
+	
+
+
+
+
+
+--------------------------------------------------------------------------
+	Hello World JAX-RS
+---------------------------------------------------------------------------
+
+	Hello World JAX-RS
+	Steps:
+		1. Create web project , add jar dependencies
+		2. configure in web.xml
+		3. Create POJOs and add annotation 
+		4. Deploy and test
+
+	
+	conf in web.xml
+	-----------------
+	<servlet>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>com.demo</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+
+	hello world Resources
+	----------------------
+
+	@Path("/messages")
+	public class MessageResources {
+
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getMessage(){
+		return "hello";
+	}
+	}
+
+
+
+	testing
+	----------
+	rest/messages
+
+
+	Some more examples:
+	------------------
+	Example
+	---------
+
+		@Path("/hello")  
+		public class HelloWorldService {  
+   	
+ 		@GET  
+ 		@Path("/{param}")  
+ 		public Response getMessage(@PathParam("param") String message) {  
+  				String output = "Jersey say Hello World!!! : " + message;  
+  				return Response.status(200).entity(output).build();  
+ 			}  
+		}  
+
+	Example:
+
+
+		@Path("/CustomerRest")
+		public class CustomerRest {
+
+		@GET
+		@Produces(MediaType.TEXT_PLAIN)
+
+		public String getCustomerInfo(@QueryParam("customerId")String customerId,@QueryParam("customerName")
+		String customerName)
+		{
+
+			return customerId+" " +customerName+" processed!";
+		}
+		}
+
+	Invoking  /rest/CustomerRest?customerId=121&customerName=raj
+
+
+	Creating CRUD operations
+	---------------------
+
+
+public class Message {
+	private int id;
+	private String message;
+	private String author;
+
+	
+	
+}
+
+
+
+
+public interface MessageDao {
+	public List<Message> getAllMessages();
+	public Message getMessageById(int messageId);
+	public Message addMessage(Message message);
+	public Message updateMessage(Message message);
+	public Message removeMessage(int messageId);
+}
+
+
+
+
+
+public class MessageDaoImp implements MessageDao {
+	private static Map<Integer, Message> messages = new HashMap<Integer, Message>();
+	static {
+		messages.put(1, new Message(1, "java", "raj"));
+		messages.put(2, new Message(2, "success", "amit"));
+	}
+
+	@Override
+	public List<Message> getAllMessages() {
+		return new ArrayList<Message>(messages.values());
+	}
+
+	@Override
+	public Message addMessage(Message message) {
+		message.setId(messages.size()+1);
+		messages.put(message.getId(), message);
+		return message;
+	}
+
+	@Override
+	public Message updateMessage(Message message) {
+		if (message.getId() <= 0)
+			return null;
+		else
+			messages.put(message.getId(), message);
+		return message;
+	}
+
+	@Override
+	public Message removeMessage(int messageId) {
+
+		return messages.remove(messageId);
+	}
+
+	@Override
+	public Message getMessageById(int messageId) {
+		return messages.get(messageId);
+	}
+
+}
+
+
+
+
+Now introduce new Resource method
+---------------------------------
+@Produces({"application/xml", "application/json"})
+------------------------------------------------------
+
+
+@Path("/messages")
+public class MessageResources {
+	private MessageDao dao=new MessageDaoImp();
+
+	@Produces(MediaType.TEXT_PLAIN)
+	public String hello(){
+		return "hello";
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Message> getAllMessages(){
+		return dao.getAllMessages();
+	}
+	
+	@GET
+	@Path("/{messageId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Message getMrssageById(@PathParam("messageId") int messageId){
+		return dao.getMessageById(messageId);
+	}
+	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Message addMessage(Message message){
+		return dao.addMessage(message);
+		
+	}
+	
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{messageId}")
+	public Message updateMessage(@PathParam("messageId") int messageId, Message message){
+		message.setId(messageId);
+		dao.updateMessage(message);
+		return message;
+	}
+	
+	@DELETE
+	@Path("/{messageId}")
+	public void delete(@PathParam("messageId") int messageId){
+		dao.removeMessage(messageId);
+	}
+	
+}
+
+
+
+	for xml restful ws service: use jaxb annotations
+	--------------------------
+
+	@XmlRootElement(name="Customer")
+	@XmlType(propOrder={"id","name","address"})
+	public class Customer {
+		private int id;
+		private String name;
+		private String address;
+
+
+
+
+
+	testing restful ws:
+	---------------
+	browser plugin postman, HTTPClient, rest assure
+
+	What to test?
+	-----------
+	ur
+
+	methods
+
+	parameter-mandatory, optional
+
+	type of request-xml/json/text
+
+	http status code
+
+	response type: xml/json , content type, content length
+
+	response body -element/ element exist or not , count, value
+
+	validate the response schema- xml schema/ json schema
+
+
+	Creating with maven:
+	--------------------
+	
+	http://crunchify.com/how-to-create-dynamic-web-project-using-maven-in-eclipse/
+	http://howtodoinjava.com/jersey/jersey-2-hello-world-application-tutorial/
+
+
+
+
+
+	Mavane dependencies:
+	-------------------
+
+ 
+ 
+  <build>
+        <finalName>demorest</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.glassfish.jersey</groupId>
+                <artifactId>jersey-bom</artifactId>
+                <version>${jersey.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet-core</artifactId>
+            <!-- use the following artifactId if you don't need servlet 2.x compatibility -->
+            <!-- artifactId>jersey-container-servlet</artifactId -->
+        </dependency>
+        <!-- uncomment this to get JSON support
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-moxy</artifactId>
+        </dependency>
+        -->
+    </dependencies>
+    <properties>
+        <jersey.version>2.16</jersey.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+
+
+	Maven dependencies:
+	---------------------
+
+  	<!-- JAX-RS -->
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <!-- Jersey 2.19 -->
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>2.19</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>2.19</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>2.19</version>
+        </dependency>
+
+
+
