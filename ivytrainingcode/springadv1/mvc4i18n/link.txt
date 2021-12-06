@@ -1,0 +1,1 @@
+https://www.journaldev.com/2610/spring-mvc-internationalization-i18n-and-localization-l10n-example
