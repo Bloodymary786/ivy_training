@@ -1,0 +1,904 @@
+
+Tools:
+----------------------
+jdk 8
+eclipse + with sts
+maven
+mysql 
+soap ui
+
+Agenda:
+-----------
+1. Hello world ws testing 
+2. Hello world soap ws @ spring boot + apache cfx, SOAP UI
+3. WSDL first example  @ spring boot + apache cfx, SOAP UI
+4. Introducton to ws standards
+5. SOAP security basics
+6. SOAP with MTOM
+5. Spring apache cfx xml configuration 
+6. discussion
+
+
+
+SOAP std
+----------
+WSDL= Web Services Definition Language
+SOAP= Simple Object Access Protocol (XML protocol)
+UDDI = Universal Description, Discovery, and Integration
+
+MTOM = Message Transmission Optimization Mechanism
+WCF= Windows Communication Foundation
+
+
+1. Hello World SOAP ws (Bottom-up approach: Start with Java Classes)
+========================================================
+
+
+	interface cal{
+
+	public int add(int a, int b);
+
+	}
+
+
+
+
+	1. Creating Web Service Endpoint
+	com.demo
+
+	@WebService
+	public class Calculator {
+		@WebMethod
+		public int sum(int param1, int param2) {
+			return param1 + param2;
+		}
+	}
+
+
+	 Endpoint.publish("http://localhost:8080/hello-ws/CalculatorService", new Calculator());
+
+
+	http://localhost:8080/hello-ws/CalculatorService?wsdl
+
+
+	2. Creating WS client
+	
+		From src of client project 
+		wsimport -target 2.0 -keep http://localhost:8080/hello-ws/CalculatorService?wsdl
+
+
+  	    CalculatorService service = new CalculatorService();
+
+        //create proxy
+        Calculator proxy = service.getCalculatorPort();
+
+        int a = new Integer("22").intValue();
+        int b = new Integer("33").intValue();
+        
+        //invoke
+        System.out.println("Sum of the arguments = " + proxy.sum(a,b));
+
+
+
+
+Hello World SOAP ws : Annotations:
+======================================
+
+Example:
+------------
+
+@WebService(name="MyCalService" , portName="CalPort", targetNamespace="com.raj")
+@SOAPBinding(style=Style.DOCUMENT, use=Use.LITERAL, parameterStyle=ParameterStyle.WRAPPED)
+public class Calculator {
+	@WebMethod(operationName="sumOp", action="sumAction")
+	@WebResult(name="sum")
+	public int sum(@WebParam(name="p1") int param1,@WebParam(name="p2")  int param2) {
+		return param1 + param2;
+	}
+}
+
+
+
+
+
+2. Hello world soap ws @ spring boot + apache cfx, SOAP UI
+===========================================================
+
+ What is apache cfx?
+------------------
+	various frameworks:
+	Apache cfx, apache axis, Metro, various custom impl by weblogic websph etc, WCF
+
+
+ Why apache cfx?
+ ==============
+	=> Impl both JAX RS and JAX WS
+
+	=> provide various tool to create soap ws ( impl jax rs and jax ws)
+
+	=> comes with soap engine
+		serialize and de-serialize soap req/resp
+		publish dispaches to request to appropriate endpoint
+	=> Imp all WS* std: WS security, WS-Policy etc
+
+	=> tools : wsdl2java, java2wsdl tools as ant/ maven plugins
+
+	=> uses spring to configure ws
+
+	=> Extend and customize : interceptors and handlers
+
+	=> Doc and samples
+
+
+
+ Hello world soap ws @ spring boot + apache cfx, SOAP UI
+ ----------------------------------------------------------
+
+ 1. create spring boot project with apache cfx dependency:
+ 		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+
+
+ 2. hello world ws:
+
+	@WebService
+	public class Calculator {
+		@WebMethod
+		public int sum(int param1, int param2) {
+			return param1 + param2;
+		}
+	}
+
+
+ 3. conf apache cfx:
+
+
+import org.apache.cxf.Bus;
+import org.apache.cxf.jaxws.EndpointImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ConfigWs {
+
+	@Autowired
+	private Bus bus;
+	
+	@Bean
+	public Endpoint endPoint() {
+		EndpointImpl ePImpl= new EndpointImpl(bus, new Calculator());
+		ePImpl.publish("/cal");
+		return ePImpl;
+
+	}
+}
+
+
+server.servlet.context-path=/wsdlfirstws
+cxf.path=/service
+
+http://localhost:8080/wsdlfirstws/service/cal?wsdl
+
+
+
+
+
+3. WSDL first example  @ spring boot + apache cfx, SOAP UI
+=============================================================
+
+ 1. start with CustomerOrders.wsdl put in resources/wsdl/
+
+ 2. add cxf-codegen-plugin
+
+         <plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<sourceRoot>${project.build.directory}/generated/cxf</sourceRoot>
+							<wsdlOptions>
+								<wsdlOption>
+									<wsdl>${basedir}/src/main/resources/wsdl/CustomerOrders.wsdl</wsdl>
+									<wsdlLocation>classpath:CustomerOrders.wsdl</wsdlLocation>
+								</wsdlOption>
+							</wsdlOptions>
+						</configuration>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+ 3. configure apache cfx
+ 
+@Configuration
+public class ConfigWs {
+
+	@Autowired
+	private Bus bus;
+
+	@Bean
+	public Endpoint endPoint() {
+		EndpointImpl ePImpl= new EndpointImpl(bus, new CustomerOrderImpl());
+		ePImpl.publish("/customerorderservice");
+		return ePImpl;
+
+	}
+}
+
+
+
+ 4. Impl ws
+
+@Features(features = "org.apache.cxf.feature.LoggingFeature")
+public class CustomerOrderImpl implements CustomerOrdersPortType {
+	Map<BigInteger, List<Order>> customerOrders = new HashMap<>();
+	int currentId;
+
+	public CustomerOrderImpl() {
+		init();
+	}
+
+	public void init() {
+		List<Order> orders = new ArrayList<>();
+		Order order = new Order();
+		order.setId(BigInteger.valueOf(1));
+
+		Product product = new Product();
+		product.setId("1");
+		product.setDescription("IPhone");
+		product.setQuantity(BigInteger.valueOf(3));
+		order.getProduct().add(product);
+
+		orders.add(order);
+
+		customerOrders.put(BigInteger.valueOf(++currentId), orders);
+
+	}
+
+	@Override
+	public GetOrdersResponse getOrders(GetOrdersRequest request) {
+		BigInteger customerId = request.getCustomerId();
+		List<Order> orders = customerOrders.get(customerId);
+
+		GetOrdersResponse response = new GetOrdersResponse();
+		response.getOrder().addAll(orders);
+
+		return response;
+	}
+
+	@Override
+	public CreateOrdersResponse createOrders(CreateOrdersRequest request) {
+		BigInteger customerId = request.getCustomerId();
+		Order order = request.getOrder();
+		List<Order> orders = customerOrders.get(customerId);
+		orders.add(order);
+
+		CreateOrdersResponse response = new CreateOrdersResponse();
+		response.setResult(true);
+
+		return response;
+	}
+}
+
+
+
+
+
+
+server.servlet.context-path=/demo
+cxf.path=/service
+
+
+ 5. testing soap ui
+
+
+
+4. Introducton to ws standards
+===============================
+			|------ Security
+			|------ addressing
+	ws standards====
+			|-------MTOM
+			|--------Encoding/Dec
+			|-----	ect	
+
+
+5. SOAP security basics
+=========================
+ steps 1: add dependencies
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-ws-security</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+
+
+ steps 2: configure WSS4J interceptors
+
+	
+	@Configuration
+	public class ConfigWs {
+	
+		@Autowired
+		private Bus bus;
+	
+		@Bean
+		public Endpoint endPoint() {
+			EndpointImpl ePImpl= new EndpointImpl(bus, new CustomerOrderImpl());
+			ePImpl.publish("/customerorderservice");
+			Map<String, Object> inProps = new HashMap<>();
+			inProps.put(ConfigurationConstants.ACTION, ConfigurationConstants.USERNAME_TOKEN);
+			inProps.put(ConfigurationConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
+			inProps.put(ConfigurationConstants.PW_CALLBACK_CLASS, UTPasswordCallback.class.getName());
+			
+			WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
+			ePImpl.getInInterceptors().add(wssIn);
+			
+			return ePImpl;
+	
+		}
+	}
+ steps 3: Create callback
+
+    public class UTPasswordCallback implements CallbackHandler {
+
+	Map<String, String> passwords = new HashMap<>();
+
+	public UTPasswordCallback() {
+		passwords.put("raj", "raj");
+		passwords.put("soap", "soap");
+	}
+
+	@Override
+	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+
+		for (Callback callback : callbacks) {
+			WSPasswordCallback passwordCallBack = (WSPasswordCallback) callback;
+			String password = passwords.get(passwordCallBack.getIdentifier());
+			if (password != null) {
+				passwordCallBack.setPassword(password);
+				return;
+			}
+		}
+
+	}
+
+   }
+
+ steps 4: run and test
+
+
+  <soapenv:Header>
+  <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" soapenv:mustUnderstand="1">
+  <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+  <wsse:Username xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">raj</wsse:Username>
+  <wsse:Password xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">raj</wsse:Password>
+  </wsse:UsernameToken>
+  </wsse:Security>
+   </soapenv:Header>
+
+
+
+6. SOAP with MTOM
+========================
+ MTOM: used for exchange the files bw servers
+ Message transmission Opt mech used to compress the files better then soap with attachement
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+
+
+ step 1: use a data type DataHander ie used to automatically read incoming file from i/p stream
+ step 2: enable mtom enable to true
+
+ upload/download file
+
+
+server.servlet.context-path=/mtom
+cxf.path=/
+
+
+
+
+import javax.xml.ws.Endpoint;
+import javax.xml.ws.soap.SOAPBinding;
+
+import org.apache.cxf.Bus;
+import org.apache.cxf.jaxws.EndpointImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class WebServiceConfig {
+
+	@Autowired
+	private Bus bus;
+
+	@Bean
+	public Endpoint endpoint() {
+		EndpointImpl endpoint = new EndpointImpl(bus, new FileWsImpl());
+		endpoint.publish("/fileWs");
+
+		SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+		binding.setMTOMEnabled(true);
+		return endpoint;
+
+	}
+
+}
+
+
+
+@WebService
+public interface FileWs {
+	void upload(@WebParam(name = "file") DataHandler attachment);
+	DataHandler download();
+}
+
+
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
+public class FileWsImpl implements FileWs {
+
+	@Override
+	public void upload(DataHandler attachment) {
+		InputStream inputStream = null;
+		OutputStream outputStream = null;
+		try {
+			 inputStream = attachment.getInputStream();
+			 outputStream = new FileOutputStream(new File("/home/raj/exp/test.jpg"));
+			byte[] b = new byte[100000];
+			int bytesRead = 0;
+
+			while ((bytesRead = inputStream.read(b)) != -1) {
+				outputStream.write(b, 0, bytesRead);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				inputStream.close();
+				outputStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	@Override
+	public DataHandler download() {
+		return new DataHandler(new FileDataSource(new File("/home/raj/exp/test.jpg")));
+	}
+
+}
+
+
+
+
+
+
+5. Spring apache cfx xml configuration
+===================================
+
+	step 1: create maven project with dependencies
+	step 2: conf FC
+
+		<servlet>
+			<servlet-name>cfx</servlet-name>
+			<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+			<load-on-startup>1</load-on-startup>
+		</servlet>
+		
+		<servlet-mapping>
+			<servlet-name>cfx</servlet-name>
+			<url-pattern>/services/*</url-pattern>
+		</servlet-mapping>
+
+
+	step 3: create ws
+
+
+@WebService
+public interface Calculator {
+	public int sum(int param1, int param2);
+}
+
+
+
+@WebService
+public class CalculatorImp implements Calculator {
+	@WebMethod
+	public int sum(int param1, int param2) {
+		return param1 + param2;
+	}
+}
+
+
+
+
+	step 4: configure endpoint:	cxf-servlet.xml
+
+	<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:cxf="http://cxf.apache.org/core" xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<jaxws:server id="calService" serviceClass="com.demo.Calculator" address="/cal">
+		<jaxws:serviceBean>
+			<bean class="com.demo.CalculatorImp"></bean>
+		</jaxws:serviceBean>
+	</jaxws:server>
+</beans>
+
+
+	step 5: test
+
+
+
+
+
+
+5. Spring apache cfx xml  security configuration:
+	 userNameTokenProfile
+================================================
+
+
+ step 1: 
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:cxf="http://cxf.apache.org/core" xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<jaxws:server id="calService" serviceClass="com.demo.Calculator" address="/cal">
+		<jaxws:serviceBean>
+			<bean class="com.demo.CalculatorImp"></bean>
+		</jaxws:serviceBean>
+		<jaxws:inInterceptors>
+			<bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+				<constructor-arg>
+					<map>
+						<entry key="action" value="UsernameToken" />
+						<entry key="passwordType" value="PasswordText" />
+						<entry key="passwordCallbackRef" value-ref="myPasswordCallback" />
+					</map>
+				</constructor-arg>
+			</bean>
+		</jaxws:inInterceptors>
+	</jaxws:server>
+	<bean id="myPasswordCallback" class="com.demo.PasswordCallbackHandler" />
+</beans>
+
+
+ step 2: configure PasswordCallbackHandler
+
+	import javax.security.auth.callback.Callback;
+	import javax.security.auth.callback.CallbackHandler;
+	import javax.security.auth.callback.UnsupportedCallbackException;
+	
+	import org.apache.wss4j.common.ext.WSPasswordCallback;
+	
+	public class PasswordCallbackHandler implements CallbackHandler {
+	
+		Map<String, String> passwords = new HashMap<>();
+	
+		public PasswordCallbackHandler() {
+			passwords.put("raj", "raj");
+			passwords.put("soap", "soap");
+		}
+	
+		@Override
+		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+			for (Callback callback : callbacks) {
+				WSPasswordCallback pc = (WSPasswordCallback) callback;
+				String password = passwords.get(pc.getIdentifier());
+				pc.setPassword(password);
+				return;
+			}
+	
+		}
+	
+	}
+
+ step 3: testing
+
+
+  <soapenv:Header>
+  <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" soapenv:mustUnderstand="1">
+  <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+  <wsse:Username xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">raj</wsse:Username>
+  <wsse:Password xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">raj</wsse:Password>
+  </wsse:UsernameToken>
+  </wsse:Security>
+   </soapenv:Header>
+
+
+
+
+
+
+WSDL first approach:
+5. Spring apache cfx xml configuration
+===================================
+	Step 0: dont forget to configure (cxf-codegen-plugin) and put wsdl and schema file to resources/wsdl
+		MusicService.wsdl
+		music.xsd
+
+		   <plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<sourceRoot>${project.build.directory}/generated/cxf</sourceRoot>
+							<wsdlOptions>
+								<wsdlOption>
+									<wsdl>${basedir}/src/main/resources/wsdl/MusicService.wsdl</wsdl>
+									<wsdlLocation>classpath:CustomerOrders.wsdl</wsdlLocation>
+								</wsdlOption>
+							</wsdlOptions>
+						</configuration>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+	
+
+	Step 2: Design DAO layer:
+	--------------------------
+
+	public class Music {
+	private String movieName;
+	private String director;
+	private String yearOfRelease;
+	private String comments;
+	}
+
+	
+		
+	public interface MusicDAO {
+		public Music getMovieByComposer(String composerName);
+	}
+
+	
+	@Repository("musicDAO")
+	public class MusicDAOImpl implements MusicDAO {
+	
+		@Override
+		public Music getMovieByComposer(String composerName) {
+	
+			Music music = null;
+	
+			if(null != composerName && composerName.equalsIgnoreCase("AR Rahman")){
+				music = new Music();
+				music.setMovieName("Thiruda Thiruda");
+				music.setDirector("Mani Ratnam");
+				music.setYearOfRelease("1993");
+				music.setComments("Comedy Thriller");
+			}
+			else{
+				music = new Music();
+				music.setMovieName("dummy_MovieName");
+				music.setDirector("dummy_Director");
+				music.setYearOfRelease("dummy_Year");
+				music.setComments("dummy_Comments");	
+			}
+			return music;
+		}
+	}
+
+
+	
+	
+	@WebService(endpointInterface="in.raj.services.musicservice.IMusicService")
+	public class MusicServiceImpl extends SpringBeanAutowiringSupport implements IMusicService {
+	
+		@Autowired	
+		private MusicDAO musicDAO;
+	
+		@Override
+		public MusicResponseType getMovieDetailByComposer(MusicRequestType parameters) throws BusinessException {
+	
+			// local variables
+			Music music = null;
+			MusicResponseType musicResponseType = null;
+			BusinessFaultType businessFaultType = null;
+	
+			try{
+				if(null != parameters && !parameters.getComposerName().equalsIgnoreCase("")){
+	
+					// invoke dao to get values
+					music = musicDAO.getMovieByComposer(parameters.getComposerName());
+	
+					// set values in the return/response type
+					musicResponseType = new MusicResponseType();
+					musicResponseType.setMovieName(music.getMovieName());
+					musicResponseType.setDirector(music.getDirector());
+					musicResponseType.setYear(music.getYearOfRelease());
+					musicResponseType.setComments(music.getComments());
+				}
+			}
+			catch(Exception ex){
+				// dummy setting for business exception, we can set more meaningful error depending on the business requirements
+				businessFaultType = new BusinessFaultType();
+				businessFaultType.setErrorCode(16359);
+				businessFaultType.setErrorMessage("Error in invoking Music Service " + ex.getMessage());
+				businessFaultType.setErrorDescription(ex.getStackTrace().toString());
+			}
+			finally{
+				// close resources, if any
+			}
+			return musicResponseType;
+		}
+	}
+
+
+
+
+	step 3: configure endpoint		cxf-servlet.xml
+
+	<jaxws:endpoint id="musicservice" implementor="com.demo.MusicServiceImpl" address="/music">
+	</jaxws:endpoint>
+
+
+
+
+
+5. Spring apache cfx xml configuration + Hibernate
+===================================================
+
+
+
+CREATE TABLE `MUSIC` (
+  `MUSIC_ID` INT(6) NOT NULL AUTO_INCREMENT,
+  `MOVIE_NAME` VARCHAR(50) NOT NULL,
+  `MOVIE_DIRECTOR` VARCHAR(50) NOT NULL,
+  `YEAR_OF_RELEASE` VARCHAR(50) NOT NULL,
+  `COMMENTS` VARCHAR(50),
+  PRIMARY KEY (`MUSIC_ID`)
+);
+
+INSERT INTO `MUSIC`(`MOVIE_NAME`, `MOVIE_DIRECTOR`, `YEAR_OF_RELEASE`, `COMMENTS`) VALUES ('Alaipayuthey','Mani Ratnam','2000','Romantic drama');
+INSERT INTO `MUSIC`(`MOVIE_NAME`, `MOVIE_DIRECTOR`, `YEAR_OF_RELEASE`, `COMMENTS`) VALUES ('Slumdog Millionaire','Danny Boyle','2009','British drama film');
+INSERT INTO `MUSIC`(`MOVIE_NAME`, `MOVIE_DIRECTOR`, `YEAR_OF_RELEASE`, `COMMENTS`) VALUES ('Rockstar','Imtiaz Ali','2011','Feature film');
+INSERT INTO `MUSIC`(`MOVIE_NAME`, `MOVIE_DIRECTOR`, `YEAR_OF_RELEASE`, `COMMENTS`) VALUES ('I','S Shankar','2014','Romantic thriller');
+
+
+
+AR Rahman
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	step 0: create database , table and populate some data
+
+	create table music (movie_id INT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,movie_name VARCHAR(50) NOT NULL,movie_director VARCHAR(50) NOT NULL,year_of_relase  VARCHAR(50) NOT NULL,comments  VARCHAR(50));
+
+
+	INSERT INTO music(`movie_name`, `movie_director`, `year_of_relase`, `comments`) VALUES ('sultan','raj','2000','drama');
+
+
+
+	
+	step 2: configure spring-hibernate-jax-ws.xml for hibernate 
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			\WEB-INF\cxf-servlet.xml, 
+			\WEB-INF\spring-hibernate-jax-ws.xml
+		</param-value>
+	</context-param>
+	
+	<servlet>
+		<servlet-name>cfx</servlet-name>
+		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>cfx</servlet-name>
+		<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
+
+
+
+
+	step 3: using hibernate
+
+		
+	@Entity
+	@Table(name = "music")
+	public class Music {
+	
+		@Id
+		@GeneratedValue
+		@Column(name = "music_id")
+		private int musicId;
+	
+		@Column(name = "movie_name")
+		private String movieName;
+	
+		@Column(name = "movie_director")
+		private String director;
+	
+		@Column(name = "year_of_relase")
+		private String yearOfRelease;
+	
+		@Column(name = "comments")
+		private String comments;
+
+
+
+
+	@Repository("musicDAO")
+	@Transactional
+	public class MusicDAOImpl implements MusicDAO {
+	
+		@Autowired
+		SessionFactory sessionFactory;
+	
+		@Override
+		public Music getMovieByComposer(String composerName) {
+	
+			Music music = null;
+			List<Music> docInfoList =null;
+			if(null != composerName && composerName.equalsIgnoreCase("raj")){
+				Query q=sessionFactory.getCurrentSession().createQuery("from Music m where m.director = :dir");
+				q.setString("dir", "raj");
+				
+				docInfoList= q.list();
+	
+			}
+			
+			return docInfoList.get(0);
+		}
+	}
+
+
+

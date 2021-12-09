@@ -1,0 +1,88 @@
+JSF 2.0 hello world:
+
+step 1: create maven project with dependencies:
+
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-impl</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+		<!-- Required for JSTL tags to be used in JSF -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+Step 2:
+Configure FC in web.xml
+
+<servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>/faces/*</url-pattern>
+  </servlet-mapping>
+
+
+Step 3: 
+create faces-config.xml in WEB-INF folder
+
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+    version="2.0">
+
+</faces-config>
+
+
+
+
+Step 4 : create managed bean 
+
+@ManagedBean
+@SessionScoped
+public class HobbiesBean {
+    private String hobby = "Java Coding";
+ 
+    public String getHobby() {
+        return hobby;
+    }
+ 
+    public void setHobby(String hobby) {
+        this.hobby = hobby;
+    }
+     
+}
+
+
+SayHello.xhtml
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+       
+<head>
+        <title>JSF 2.0 Say Hello</title>
+</head>
+     <body>
+        <p>Hey There! My hobby is #{hobbiesBean.hobby}</p>
+    </body>
+</html>

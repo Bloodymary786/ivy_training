@@ -1,11 +1,5 @@
 Struts2 Notes
-
- 
-topics:
-------
- 
-
-1.	Intro,architecure of Struts2
+1.	MVC introduction
 2.	Hello world
 3.	Action Interface, ActionSupport 4.Aware Interfaces
 5.	Namespace,Multiple mapping files, Dynamic Method Invocation
@@ -19,100 +13,100 @@ topics:
 
 
 
-1.	Intro,architecure of Struts2
-
-What is Struts2?
-
-Elegant, extensible MVC based framework for creating enterprise-ready Java web applications.
-
-Design pattern used by Struts2 ?
-
-•	Front Controller pattern
-–	is a component looks for all the request for specific url pattern and routes them into the framework for further processing...
- 
-•	Composite Pattern
-–	struts tiles
-•	Command Pattern
-–	comm. with diff components
-–	Ex Action classes
-•	Decorator Pattern
-–	view solution like freemarker etc
-
-
-STRUTS 2 BASIC ARCHITECTURE
-
- 
-Struts 2 Architecture(with Interceptors)
-
  
 2.	Hello world struts2
-
-
-
+___________________________________
 steps:
 
-1.	create an dynamic web project in eclipse and put jar in lib and set classpath
-
-2.	set filter in web.xml
-org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
-
-
-3.	create a hello world Action	LoginAction
-
-public class LoginAction
-{
-
-private String name; private String passwords;
-...
-...
+1.	create maven project with dependencies
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-core</artifactId>
+			<version>2.3.4.1</version>
+		</dependency>
 
 
-public String execute() {
 
-return SUCCESS;
+2. Configure filter in web.xml
+	<filter>
+		<filter-name>struts</filter-name>
+		<filter-class>
+                org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
+        </filter-class>
+	</filter>
 
+	<filter-mapping>
+		<filter-name>struts</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
+3.create a hello world Action	LoginAction
+
+public class LoginAction {
+	private String name;
+	private String password;
+	
+	//getter setter etc
+	
+	public String execute() {
+		return "success";
+	}
 }
-}
 
 
-4.	create an struts.xml in src and map action to it
 
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
-    "http://struts.apache.org/dtds/struts-2.0.dtd">
+4.create an struts.xml in resources folder (in classpath)
+
+
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
+	<constant name="struts.enable.DynamicMethodInvocation"
+		value="false" />
+	<constant name="struts.devMode" value="false" />
+	<package name="default" namespace="/" extends="struts-default">
+		<action name="LoginAction" class="com.demo.LoginAction"
+			method="execute">
+			<result name="success">success.jsp</result>
+			<result name="error">failure.jsp</result>
+		</action>
+	</package>
 </struts>
-<constant name="struts.enable.DynamicMethodInvocation" value="false" />
-<constant name="struts.devMode" value="false" />
-<package name="default" namespace="/" extends="struts-default">
-
- 
 
 
 
 
-</package>
- 
-<action name="LoginAction" class="com.actions.LoginAction" method="execute">
-<result name="success">pages/success.jsp</result>
-<result name="error">pages/failure.jsp</result>
-</action>
- 
-5.	create suitable views
 
+
+5.create suitable views
 
 index.jsp
-
+___________
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<s:form action=" LoginAction.action">
-<s:textfield name="name" label="Username" />
-<s:password name="password" label="Password" />
-<s:submit />
-</s:form> success.jsp
+
+<body>
+	<s:form action="LoginAction.action">
+		<s:textfield name="name" label="Username" />
+		<s:password name="password" label="Password" />
+		<s:submit />
+	</s:form>
+</body>
+
+success.jsp
+___________
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <s:property value="name"/>
- 
+
+
+
+
 3.	Action Interface, ActionSupport
 
 Action interface
